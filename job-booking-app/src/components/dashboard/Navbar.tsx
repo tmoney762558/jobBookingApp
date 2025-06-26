@@ -9,9 +9,11 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   return (
     <nav className="flex lg:justify-between items-center py-3 px-4 text-sm border-b-[1px] border-neutral-300">
-      <div className="flex flex-1 justify-start items-center gap-2 cursor-pointer">
-        <div className="p-2 bg-black rounded-md">
-          <FaBriefcase fontSize={"0.9rem"} fill="white"></FaBriefcase>
+      <div className="flex flex-1 justify-start items-center gap-2">
+        <div className="cursor-pointer">
+          <div className="p-2 bg-black rounded-md">
+            <FaBriefcase fontSize={"0.9rem"} fill="white"></FaBriefcase>
+          </div>
         </div>
         <p className="lg:block hidden font-bold">JobBooker</p>
       </div>
@@ -26,7 +28,11 @@ const Navbar = () => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
             ></BiMenu>
           ) : (
-            <CgClose className="cursor-pointer" fontSize={"1.5rem"} onClick={() => setDropdownOpen(!dropdownOpen)}></CgClose>
+            <CgClose
+              className="cursor-pointer"
+              fontSize={"1.5rem"}
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            ></CgClose>
           )}
           {dropdownOpen ? (
             <ul className="flex flex-col items-end absolute top-[2.3rem]">
