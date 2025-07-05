@@ -1,8 +1,20 @@
+import { useState, type ChangeEvent } from "react";
 import DropdownMenu from "../global/DropdownMenu";
 import ServicesOffered from "./ServicesOffered";
 import { FaPlus } from "react-icons/fa";
+import { useIsInputNumber } from "../customHooks/useIsInputNumber";
 
 const BusinessEditor = () => {
+  const isInputNumber = useIsInputNumber;
+  const [phoneNumberInput, setPhoneNumberInput] = useState("");
+
+  function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
+    const inputValue = event.target.value;
+    if (isInputNumber(event)) {
+      setPhoneNumberInput(inputValue);
+    }
+  }
+
   return (
     <div className="flex justify-center items-center w-full min-h-[45rem] py-5 overflow-y-auto text-sm">
       <form className="w-full max-w-[45rem] p-5 border-2 border-neutral-200">
@@ -52,6 +64,9 @@ const BusinessEditor = () => {
               placeholder="123-456-7890"
               maxLength={10}
               required
+              onChange={(e) => {
+                handlePhoneInput(e);
+              }}
             ></input>
           </div>
           <div className="flex flex-1 flex-col gap-2">
@@ -61,7 +76,6 @@ const BusinessEditor = () => {
               type="tel"
               placeholder="http://website.com"
               maxLength={40}
-              required
             ></input>
           </div>
         </div>
