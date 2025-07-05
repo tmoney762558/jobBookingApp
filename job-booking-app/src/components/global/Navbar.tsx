@@ -1,6 +1,5 @@
-import { CiBellOn } from "react-icons/ci";
 import { FaBriefcase } from "react-icons/fa";
-import defaultAvatar from "../../assets/defaultAvatar.png";
+import genericUser1 from "../../assets/genericUser1.svg";
 import { BiMenu } from "react-icons/bi";
 import { useState } from "react";
 import { CgClose } from "react-icons/cg";
@@ -17,9 +16,11 @@ const Navbar = () => {
         </div>
         <p className="lg:block hidden font-bold">JobBooker</p>
       </div>
-      <div className="flex flex-1 justify-end items-center gap-4">
-        <CiBellOn className="cursor-pointer" fontSize={"1.7rem"}></CiBellOn>
-        <img className="w-7 cursor-pointer" src={defaultAvatar}></img>
+      <div className="flex flex-1 justify-end items-center gap-3">
+        <img
+          className="w-7 bg-black rounded-full cursor-pointer"
+          src={genericUser1}
+        ></img>
         <div className="lg:hidden flex justify-end relative">
           {!dropdownOpen ? (
             <BiMenu

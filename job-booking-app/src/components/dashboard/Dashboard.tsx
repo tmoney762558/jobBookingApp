@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+import Navbar from "../global/Navbar";
 import RecentBookings from "./RecentBookings";
 import SideNav from "./SideNav";
 import QuickStats from "./QuickStats";
