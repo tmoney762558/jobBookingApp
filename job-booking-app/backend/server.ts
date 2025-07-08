@@ -3,6 +3,7 @@ import { createServer } from "http";
 import cors from "cors";
 import helmet from "helmet";
 import pool from "./db.ts";
+import authRoutes from "./routes/authRoutes.ts";
 
 const app = express();
 const server = createServer(app);
@@ -39,10 +40,16 @@ async function checkDb() {
 
 checkDb();
 
-// Set up all app.use() calls
+// Set up helmet, cors, and express.json
 app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Set up all routes
+app.use("/auth", authRoutes)
+
+
+
 
 server.listen(PORT, () => {
   console.log(`Server is listening on port: ${PORT}.`);
