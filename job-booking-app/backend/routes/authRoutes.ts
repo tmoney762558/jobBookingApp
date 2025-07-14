@@ -10,12 +10,12 @@ router.post(
   "/register",
   async (req: express.Request, res: express.Response) => {
     try {
-      const { username, password }: { username: string; password: string } =
-        req.body;
+      const { username, password, rememberMe } = req.body;
 
       if (
         typeof username !== "string" ||
         typeof password !== "string" ||
+        typeof rememberMe !== "boolean" ||
         !username ||
         !password
       ) {
@@ -55,10 +55,9 @@ router.post(
 
       // Remove the fallback from production
       const token = jwt.sign(
-        {
-          id: newId.rows[0].id,
-        },
-        process.env.JWT_SECRET || "randomText"
+        { id: newId.rows[0].id },
+        process.env.JWT_SECRET || "randomText",
+        { expiresIn: rememberMe ? "2h" : "24h" }
       );
 
       res.status(200).json({ token });
@@ -72,12 +71,12 @@ router.post(
 // Login a new user
 router.post("/login", async (req: express.Request, res: express.Response) => {
   try {
-    const { username, password }: { username: string; password: string } =
-      req.body;
+    const { username, password, rememberMe } = req.body;
 
     if (
       typeof username !== "string" ||
       typeof password !== "string" ||
+      typeof rememberMe !== "boolean" ||
       !username ||
       !password
     ) {
@@ -108,10 +107,9 @@ router.post("/login", async (req: express.Request, res: express.Response) => {
     }
 
     const token = jwt.sign(
-      {
-        id: foundMatch.rows[0].id,
-      },
-      process.env.JWT_SECRET || "randomText"
+      { id: foundMatch.rows[0].id },
+      process.env.JWT_SECRET || "randomText",
+      { expiresIn: rememberMe ? "2h" : "24h" }
     );
 
     res.status(200).json({ token });

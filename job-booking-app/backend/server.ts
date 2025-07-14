@@ -11,11 +11,11 @@ import bookingRoutes from "./routes/bookingRoutes.ts";
 const app = express();
 const server = createServer(app);
 
-const PORT = 3000;
+const PORT = 3001;
 
 // CORS Configuration
 const corsOptions = {
-  origin: ["/"],
+  origin: "http://localhost:5173",
   methods: "GET, POST, PUT, DELETE",
   allowedHeaders: "Content-Type, Authorization",
 };
