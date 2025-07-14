@@ -46,6 +46,7 @@ const Authentication = () => {
         body: JSON.stringify({
           username: usernameInput,
           password: passwordInput,
+          rememberMe: rememberMeInput
         }),
       });
 
@@ -95,7 +96,7 @@ const Authentication = () => {
             </div>
             <div className="flex justify-between items-center w-full my-6">
               <div className="flex gap-2">
-                <input type="checkbox" onClick={() => setRememberMeInput(!setRememberMeInput)}></input>
+                <input type="checkbox" onClick={() => setRememberMeInput(!rememberMeInput)}></input>
                 <label>Remember me</label>
               </div>
             </div>
