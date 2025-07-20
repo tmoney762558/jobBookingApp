@@ -1,12 +1,45 @@
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import DropdownMenu from "../global/DropdownMenu";
-import ServicesOffered from "./ServicesOffered";
 import { FaPlus } from "react-icons/fa";
 import { useIsInputNumber } from "../customHooks/useIsInputNumber";
+import Service from "./Service";
+
+interface Service {
+  title: string;
+  price: string;
+  description: string;
+  duration: string;
+}
 
 const BusinessEditor = () => {
+  const token = localStorage.getItem("token");
   const isInputNumber = useIsInputNumber;
+  const [savedServices, setSavedServices] = useState<Service[]>([]);
+  const [businessNameInput, setBusinessNameInput] = useState("");
+  const [businessDescriptionInput, setBusinessDescriptionInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const response = await fetch("http://localhost:3001/services/2", {
+          method: "GET",
+          headers: {
+            Authorization: token || "",
+          },
+        });
+
+        if (response.ok) {
+          const apiData = await response.json();
+          setSavedServices(apiData);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fetchServices();
+  }, [token]);
 
   function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
     const inputValue = event.target.value;
@@ -43,9 +76,14 @@ const BusinessEditor = () => {
             options={["Towing", "IT Support", "Mechanic"]}
           ></DropdownMenu>
         </div>
-        <ServicesOffered
-          services={[{ name: "", price: 0, description: "", duration: "" }]}
-        ></ServicesOffered>
+        {savedServices.map((service, index) => (
+          <Service
+            title={service.title}
+            price={service.price}
+            description={service.description}
+            duration={service.duration}
+          ></Service>
+        ))}
         <button
           className="flex items-center gap-2 mt-3 cursor-pointer"
           type="button"

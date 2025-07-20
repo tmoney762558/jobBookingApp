@@ -36,6 +36,7 @@ CREATE TABLE
     IF NOT EXISTS "bookings" (
         id BIGSERIAL PRIMARY KEY,
         business_id BIGINT NOT NULL,
+        service_id BIGINT NOT NULL,
         customer_id BIGINT NOT NULL,
         FOREIGN KEY (business_id) REFERENCES businesses (id),
         FOREIGN KEY (customer_id) REFERENCES users (id),

@@ -2,8 +2,9 @@ import { useState } from "react";
 import { BsGoogle, BsMicrosoft } from "react-icons/bs";
 import { FaBriefcase } from "react-icons/fa";
 
-interface TokenResponse {
+interface TokenResponse extends Response {
   token: string;
+  message?: string;
 }
 
 const Authentication = () => {
@@ -28,7 +29,7 @@ const Authentication = () => {
 
       const apiData: TokenResponse = await response.json();
 
-      if (apiData) {
+      if (!apiData.ok) {
         localStorage.setItem("token", apiData.token);
       }
     } catch (err) {
@@ -46,7 +47,7 @@ const Authentication = () => {
         body: JSON.stringify({
           username: usernameInput,
           password: passwordInput,
-          rememberMe: rememberMeInput
+          rememberMe: rememberMeInput,
         }),
       });
 
@@ -61,7 +62,21 @@ const Authentication = () => {
   }
 
   return (
-    <div className="flex justify-center items-center w-full min-h-[40rem] bg-neutral-100">
+    <form
+      className="flex justify-center items-center w-full min-h-[40rem] bg-neutral-100"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (operation === "Sign In") {
+          handleSignIn();
+        } else {
+          handleSignUp();
+        }
+        e.currentTarget.reset();
+        setUsernameInput("");
+        setPasswordInput("");
+        setRememberMeInput(false);
+      }}
+    >
       <div className="flex justify-center items-center w-full min-h-screen p-4">
         <div className="flex flex-col w-full max-w-[30rem] py-7 md:px-7 p-4 bg-white border-2 border-neutral-200 rounded-md">
           <div className="flex flex-col items-center">
@@ -96,19 +111,16 @@ const Authentication = () => {
             </div>
             <div className="flex justify-between items-center w-full my-6">
               <div className="flex gap-2">
-                <input type="checkbox" onClick={() => setRememberMeInput(!rememberMeInput)}></input>
+                <input
+                  type="checkbox"
+                  onClick={() => setRememberMeInput(!rememberMeInput)}
+                ></input>
                 <label>Remember me</label>
               </div>
             </div>
             <button
-              className="w-full py-[0.4rem] bg-black rounded-md text-white font-bold"
-              onClick={() => {
-                if (operation === "Sign In") {
-                  handleSignIn();
-                } else {
-                  handleSignUp();
-                }
-              }}
+              className="w-full py-[0.4rem] bg-black rounded-md text-white font-bold cursor-pointer"
+              type="submit"
             >
               {operation}
             </button>
@@ -119,11 +131,17 @@ const Authentication = () => {
                 <span className="w-full h-[2px] bg-neutral-200"></span>
               </div>
               <div className="flex flex-col gap-3 w-full">
-                <button className="flex justify-center items-center gap-3 w-full py-2 border-2 border-neutral-200 cursor-pointer">
+                <button
+                  className="flex justify-center items-center gap-3 w-full py-2 border-2 border-neutral-200 cursor-pointer"
+                  type="button"
+                >
                   <BsGoogle></BsGoogle>
                   <p>Continue with Google</p>
                 </button>
-                <button className="flex justify-center items-center gap-3 w-full py-2 border-2 border-neutral-200 cursor-pointer">
+                <button
+                  className="flex justify-center items-center gap-3 w-full py-2 border-2 border-neutral-200 cursor-pointer"
+                  type="button"
+                >
                   <BsMicrosoft></BsMicrosoft>
                   <p>Continue with Microsoft</p>
                 </button>
@@ -131,6 +149,7 @@ const Authentication = () => {
             </div>
             <button
               className="mt-7 border-b-2 border-transparent hover:border-black cursor-pointer"
+              type="button"
               onClick={() => {
                 if (operation === "Sign In") {
                   setOperation("Sign Up");
@@ -147,7 +166,7 @@ const Authentication = () => {
         </div>
       </div>
       <div className="bg-white"></div>
-    </div>
+    </form>
   );
 };
 

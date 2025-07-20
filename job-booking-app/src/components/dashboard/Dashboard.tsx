@@ -3,7 +3,7 @@ import RecentBookings from "./RecentBookings";
 import SideNav from "./SideNav";
 import QuickStats from "./QuickStats";
 
-const Dashboard = () => {
+const Dashboard = ({ businessId }: { businessId: number }) => {
   return (
     <div className="flex flex-col w-full min-h-[40rem] h-screen">
       <Navbar></Navbar>
@@ -17,8 +17,10 @@ const Dashboard = () => {
                 <p>Welcome back, here's some info about your business.</p>
               </div>
             </div>
+            <div className="hidden">
             <QuickStats></QuickStats>
-            <RecentBookings></RecentBookings>
+            </div>
+            <RecentBookings businessId={businessId}></RecentBookings>
           </div>
         </div>
       </div>

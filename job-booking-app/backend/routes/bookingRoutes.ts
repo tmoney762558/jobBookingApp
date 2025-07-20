@@ -7,16 +7,28 @@ interface AuthenticatedRequest extends express.Request {
 
 const router = express.Router();
 
-// Get all bookings for a user
+// Get all bookings for a customer
 router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const userId = req.userId;
 
     const bookings = await pool.query(
       `
-                SELECT location, current_offer, status FROM bookings
-                WHERE customer_id = $1
-            `,
+      SELECT 
+      services.name AS service_name,
+      bookings.status,
+      bookings.description,
+      bookings.created_at,
+      bookings.location,
+      bookings.current_offer,
+      businesses.name AS business_name,
+      businesses.phone_number
+      FROM bookings
+      LEFT JOIN services ON services.id = bookings.service_id
+      LEFT JOIN businesses ON businesses.id = bookings.business_id
+      WHERE bookings.customer_id = $1
+      ORDER BY bookings.created_at
+      `,
       [userId]
     );
 
@@ -25,7 +37,7 @@ router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
       return;
     }
 
-    res.status(200).json({ bookings });
+    res.status(200).json(bookings.rows);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
@@ -42,10 +54,21 @@ router.get(
 
       const bookings = await pool.query(
         `
-        SELECT location, current_offer, status FROM bookings
-        WHERE EXISTS (SELECT id FROM businesses WHERE business_owner_id = $1)
-        AND business_id = $2
-      `,
+        SELECT 
+        users.username AS customer_name, 
+        services.name AS service_name, 
+        bookings.created_at, 
+        bookings.location, 
+        bookings.current_offer, 
+        bookings.status,
+        bookings.description
+        FROM bookings
+        LEFT JOIN users ON users.id = bookings.customer_id
+        LEFT JOIN services ON services.id = bookings.service_id
+        WHERE bookings.business_id = $2
+        AND EXISTS (SELECT 1 FROM businesses WHERE businesses.id = bookings.business_id AND businesses.business_owner_id = $1)
+        ORDER BY bookings.created_at
+        `,
         [userId, businessId]
       );
 
@@ -54,7 +77,41 @@ router.get(
         return;
       }
 
-      res.status(200).json({ bookings });
+      res.status(200).json(bookings.rows);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
+// Get top 5 bookings for a business
+router.get(
+  "/:businessId/top",
+  async (req: AuthenticatedRequest, res: express.Response) => {
+    try {
+      const userId = req.userId;
+      const { businessId } = req.params;
+
+      const bookings = await pool.query(
+        `
+        SELECT users.username, services.name, bookings.created_at, bookings.location, bookings.current_offer, bookings.status FROM bookings
+        LEFT JOIN users ON users.id = bookings.customer_id
+        LEFT JOIN services ON services.id = bookings.service_id
+        WHERE bookings.business_id = $2
+        AND EXISTS (SELECT 1 FROM businesses WHERE businesses.id = bookings.business_id AND businesses.business_owner_id = $1)
+        ORDER BY bookings.created_at
+        LIMIT 5
+        `,
+        [userId, parseInt(businessId)]
+      );
+
+      if (!bookings.rows[0]) {
+        res.status(400).json({ message: "No bookings found" });
+        return;
+      }
+
+      res.status(200).json(bookings.rows);
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Internal Server Error" });
@@ -72,6 +129,10 @@ router.post(
       const { location, description, currentOffer } = req.body;
 
       if (
+        isNaN(parseInt(businessId)) ||
+        !businessId ||
+        isNaN(parseInt(serviceId)) ||
+        !serviceId ||
         typeof location !== "string" ||
         !location ||
         typeof description !== "string" ||
@@ -82,23 +143,22 @@ router.post(
         res.status(400).json({
           message: "One or more fields were invalid or not provided.",
         });
+        return;
       }
 
       const newBooking = await pool.query(
         `
-            INSERT INTO bookings (business_id, customer_id, location, description, current_offer)
-            SELECT b.id, $1, $2, $3, $4
-            FROM businesses b
-            WHERE EXISTS
-            (SELECT id FROM services WHERE id = $6 AND business_id = $5)
-            AND EXISTS (SELECT id FROM businesses WHERE id = $5 AND business_owner_id = $1)
-            RETURNING id
+        INSERT INTO bookings (customer_id, business_id, service_id, location, description, current_offer)
+        SELECT $1, b.id, $2, $3, $4, $5
+        FROM businesses b
+        WHERE EXISTS
+        (SELECT id FROM services WHERE id = $2 AND business_id = b.id)
+        RETURNING id
         `,
-        [userId, location, description, currentOffer, businessId, serviceId]
+        [userId, parseInt(serviceId), location, description, currentOffer]
       );
 
       // Will trigger if the user does not own the business under the provided id
-      // or if either parameter has no data
       if (!newBooking.rows[0]) {
         res.status(400).json({ message: "Invalid parameters." });
         return;

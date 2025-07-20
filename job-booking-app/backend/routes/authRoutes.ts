@@ -14,10 +14,10 @@ router.post(
 
       if (
         typeof username !== "string" ||
-        typeof password !== "string" ||
-        typeof rememberMe !== "boolean" ||
         !username ||
-        !password
+        typeof password !== "string" ||
+        !password ||
+        typeof rememberMe !== "boolean"
       ) {
         res
           .status(400)
@@ -57,7 +57,7 @@ router.post(
       const token = jwt.sign(
         { id: newId.rows[0].id },
         process.env.JWT_SECRET || "randomText",
-        { expiresIn: rememberMe ? "2h" : "24h" }
+        { expiresIn: rememberMe ? "24h" : "2h" }
       );
 
       res.status(200).json({ token });
@@ -75,10 +75,10 @@ router.post("/login", async (req: express.Request, res: express.Response) => {
 
     if (
       typeof username !== "string" ||
-      typeof password !== "string" ||
-      typeof rememberMe !== "boolean" ||
       !username ||
-      !password
+      typeof password !== "string" ||
+      !password ||
+      typeof rememberMe !== "boolean"
     ) {
       res
         .status(400)
@@ -109,7 +109,7 @@ router.post("/login", async (req: express.Request, res: express.Response) => {
     const token = jwt.sign(
       { id: foundMatch.rows[0].id },
       process.env.JWT_SECRET || "randomText",
-      { expiresIn: rememberMe ? "2h" : "24h" }
+      { expiresIn: rememberMe ? "24h" : "2h" }
     );
 
     res.status(200).json({ token });

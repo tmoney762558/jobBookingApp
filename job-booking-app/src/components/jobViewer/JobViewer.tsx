@@ -1,13 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DropdownMenu from "../global/DropdownMenu";
 import Navbar from "../global/Navbar";
 import CustomerBooking from "./CustomerBooking";
 import BusinessBooking from "./BusinessBooking";
 
+interface CustomerBooking {
+  service_name: string;
+  status: string;
+  description: string;
+  created_at: string;
+  location: string;
+  current_offer: string;
+  business_name: string;
+  phone_number: string;
+}
+
+interface BusinessBooking {
+  customer_name: string;
+  service_name: string;
+  status: string;
+  description: string;
+  created_at: string;
+  location: string;
+  current_offer: string;
+  business_name: string;
+}
+
 const JobViewer = () => {
+  const token = localStorage.getItem("token");
   const [currentView, setCurrentView] = useState("Customer");
-  const [customerBookings, setCustomerBookings] = useState(["", "", "", ""]);
-  const [businessBookings, setBusinessBookings] = useState([""]);
+  const [customerBookings, setCustomerBookings] = useState<CustomerBooking[]>([]);
+  const [businessBookings, setBusinessBookings] = useState<BusinessBooking[]>([]);
+
+  useEffect(() => {
+    async function fetchCustomerBookings() {
+      try {
+        const response = await fetch("http://localhost:3001/bookings", {
+          method: "GET",
+          headers: {
+            Authorization: token || "",
+          },
+        });
+
+        if (response.ok) {
+          const apiData: CustomerBooking[] = await response.json();
+          setCustomerBookings(apiData);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    fetchCustomerBookings();
+  }, [token]);
+
+  async function fetchBusinessBookings() {
+    try {
+      const response = await fetch("http://localhost:3001/bookings/2", {
+        method: "GET",
+        headers: {
+          Authorization: token || "",
+        },
+      });
+
+      if (response.ok) {
+        const apiData: BusinessBooking[] = await response.json();
+        setBusinessBookings(apiData);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <div>
@@ -34,7 +97,10 @@ const JobViewer = () => {
                       ? "bg-black text-white"
                       : "bg-neutral-200 text-black"
                   } font-semibold cursor-pointer`}
-                  onClick={() => setCurrentView("Business")}
+                  onClick={() => {
+                    setCurrentView("Business");
+                    fetchBusinessBookings();
+                  }}
                 >
                   Business View
                 </button>
@@ -56,10 +122,29 @@ const JobViewer = () => {
               <div className="flex flex-col gap-5 h-[50vh] min-h-[30rem] mt-5 overflow-y-auto">
                 {currentView === "Customer"
                   ? customerBookings.map((booking, index) => (
-                      <CustomerBooking key={index}></CustomerBooking>
+                      <CustomerBooking
+                        service_name={booking.service_name}
+                        status={booking.status}
+                        description={booking.description}
+                        created_at={booking.created_at}
+                        location={booking.location}
+                        current_offer={booking.current_offer}
+                        business_name={booking.business_name}
+                        phone_number={booking.phone_number}
+                        key={index}
+                      ></CustomerBooking>
                     ))
                   : businessBookings.map((booking, index) => (
-                      <BusinessBooking key={index}></BusinessBooking>
+                      <BusinessBooking
+                        customer_name={booking.customer_name}
+                        service_name={booking.service_name}
+                        status={booking.status}
+                        description={booking.description}
+                        created_at={booking.created_at}
+                        location={booking.location}
+                        current_offer={booking.current_offer}
+                        key={index}
+                      ></BusinessBooking>
                     ))}
               </div>
             </div>

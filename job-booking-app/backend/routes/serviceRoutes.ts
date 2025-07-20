@@ -65,7 +65,7 @@ router.get(
         return;
       }
 
-      res.status(200).json({ services: businessServices.rows });
+      res.status(200).json(businessServices.rows);
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Internal Server Error" });
