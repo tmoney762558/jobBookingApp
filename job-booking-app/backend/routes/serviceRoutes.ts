@@ -51,7 +51,7 @@ router.get(
 
       const businessServices = await pool.query(
         `
-            SELECT name, price, description, duration
+            SELECT id, name, price, description, duration
             FROM services
             WHERE business_id = $1
         `,

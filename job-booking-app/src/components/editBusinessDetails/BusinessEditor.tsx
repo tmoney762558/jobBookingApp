@@ -1,28 +1,38 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import DropdownMenu from "../global/DropdownMenu";
-import { FaPlus } from "react-icons/fa";
 import { useIsInputNumber } from "../customHooks/useIsInputNumber";
 import Service from "./Service";
+import NewService from "./NewService";
 
 interface Service {
-  title: string;
+  id: number;
+  name: string;
   price: string;
   description: string;
   duration: string;
 }
 
-const BusinessEditor = () => {
+const BusinessEditor = ({
+  operation,
+  businessId,
+}: {
+  operation: string;
+  businessId: number;
+}) => {
+  const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
   const isInputNumber = useIsInputNumber;
   const [savedServices, setSavedServices] = useState<Service[]>([]);
   const [businessNameInput, setBusinessNameInput] = useState("");
+  const [businessLocationInput, setBusinessLocationInput] = useState("");
   const [businessDescriptionInput, setBusinessDescriptionInput] = useState("");
+  const [businessCategoryInput, setBusinessCategoryInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
 
   useEffect(() => {
     async function fetchServices() {
       try {
-        const response = await fetch("http://localhost:3001/services/2", {
+        const response = await fetch(`${apiBase}/services/${businessId}`, {
           method: "GET",
           headers: {
             Authorization: token || "",
@@ -34,12 +44,39 @@ const BusinessEditor = () => {
           setSavedServices(apiData);
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
 
     fetchServices();
-  }, [token]);
+  }, [token, apiBase, businessId]);
+
+  async function createBusiness() {
+    try {
+      const response = await fetch("http://localhost:3001/businesses", {
+        method: "POST",
+        headers: {
+          Authorization: token || "",
+        },
+        body: JSON.stringify({
+          name: businessNameInput,
+          location: businessLocationInput,
+          description: businessDescriptionInput,
+          category: businessCategoryInput,
+          phoneNumber: phoneNumberInput,
+        }),
+      });
+
+      if (response.ok) {
+        const apiData = await response.json();
+        alert(apiData.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function editBusiness() {}
 
   function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
     const inputValue = event.target.value;
@@ -59,6 +96,21 @@ const BusinessEditor = () => {
             type="text"
             placeholder="Enter your business name"
             required
+            onChange={(e) => {
+              setBusinessNameInput(e.target.value);
+            }}
+          ></input>
+        </div>
+        <div className="flex flex-col gap-2 w-full mt-5">
+          <label className="block">Business Location *</label>
+          <input
+            className="w-full py-1 px-3 border-2 border-neutral-200 rounded-md outline-none"
+            type="text"
+            placeholder="Enter the location of your business"
+            required
+            onChange={(e) => {
+              setBusinessLocationInput(e.target.value);
+            }}
           ></input>
         </div>
         <div className="flex flex-col gap-2 w-full mt-5">
@@ -66,6 +118,9 @@ const BusinessEditor = () => {
           <textarea
             className="w-full h-20 py-1 px-3 border-2 border-neutral-200 rounded-md outline-none resize-none"
             placeholder="Describe what your business does"
+            onChange={(e) => {
+              setBusinessDescriptionInput(e.target.value);
+            }}
           ></textarea>
         </div>
         <div className="flex flex-col gap-2">
@@ -74,23 +129,21 @@ const BusinessEditor = () => {
             width={"w-full"}
             placeholder="Select a category"
             options={["Towing", "IT Support", "Mechanic"]}
+            setterFunction={setBusinessCategoryInput}
           ></DropdownMenu>
         </div>
+        <label className="block mt-7 text-xl font-bold">Services Offered</label>
         {savedServices.map((service, index) => (
           <Service
-            title={service.title}
-            price={service.price}
-            description={service.description}
-            duration={service.duration}
+            key={index}
+            defaultName={service.name}
+            defaultDescription={service.price}
+            defaultPrice={service.description}
+            defaultDuration={service.duration}
+            serviceId={service.id}
           ></Service>
         ))}
-        <button
-          className="flex items-center gap-2 mt-3 cursor-pointer"
-          type="button"
-        >
-          <FaPlus fontSize={"0.75rem"}></FaPlus>
-          <p>Add Another Service</p>
-        </button>
+        <NewService></NewService>
         <div className="w-full h-[1px] mt-7 bg-neutral-200"></div>
         <h2 className="mt-7 text-xl font-bold">Contact Information</h2>
         <div className="flex gap-2 items-center w-full mt-5">
@@ -117,13 +170,7 @@ const BusinessEditor = () => {
             ></input>
           </div>
         </div>
-        <div className="flex justify-between items-center mt-5">
-          <button
-            className="py-2 px-4 border-2 bg-white border-neutral-200 rounded-md font-bold cursor-pointer"
-            type="button"
-          >
-            Save as Draft
-          </button>
+        <div className="flex items-center mt-5">
           <div className="flex items-center gap-3">
             <button
               className="py-2 px-4 border-2 bg-white border-neutral-200 rounded-md font-bold cursor-pointer"
@@ -133,7 +180,14 @@ const BusinessEditor = () => {
             </button>
             <button
               className="py-2 px-4 bg-black border-2 border-neutral-200 rounded-md font-bold text-white cursor-pointer"
-              type="submit"
+              type="button"
+              onClick={() => {
+                if (operation === "Create") {
+                  createBusiness();
+                } else {
+                  editBusiness();
+                }
+              }}
             >
               Complete Setup
             </button>

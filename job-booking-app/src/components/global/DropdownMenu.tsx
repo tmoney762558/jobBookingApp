@@ -5,10 +5,12 @@ const DropdownMenu = ({
   width,
   placeholder,
   options,
+  setterFunction,
 }: {
   width: string;
   placeholder: string;
   options: string[];
+  setterFunction: (option: string) => void;
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState(placeholder);
@@ -26,11 +28,13 @@ const DropdownMenu = ({
         </button>
         {dropdownOpen ? (
           <ul className="absolute w-full max-h-22 border-b-2 border-neutral-200 overflow-y-auto text-sm">
-            {options.map((option) => (
+            {options.map((option, index) => (
               <li
                 className="w-full py-1 px-3 hover:bg-white bg-neutral-100 border-x-2 border-neutral-200 cursor-pointer"
+                key={index}
                 onClick={() => {
                   setDropdownSelection(option);
+                  setterFunction(option);
                   setDropdownOpen(false);
                 }}
               >
