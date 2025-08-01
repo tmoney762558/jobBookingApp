@@ -25,10 +25,39 @@ router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
 
     res.status(200).json({ businesses: businesses.rows });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// Get a list of businesses for a user
+router.get(
+  "/:businessId",
+  async (req: AuthenticatedRequest, res: express.Response) => {
+    try {
+      const userId = req.userId;
+      const { businessId } = req.params;
+
+      if (!businessId || typeof parseInt(businessId) !== "number") {
+        res.status(400).json({ message: "Business ID was not provided." });
+        return;
+      }
+
+      const businessData = await pool.query(
+        `
+        SELECT name, location, description, category, phone_number, website_link
+        FROM businesses
+        WHERE id = $1 AND business_owner_id = $2
+        `,
+        [businessId, userId]
+      );
+
+      res.status(200).json(businessData.rows[0]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+);
 
 // Create a new business for a user
 router.post("/", async (req: AuthenticatedRequest, res: express.Response) => {
@@ -81,7 +110,7 @@ router.post("/", async (req: AuthenticatedRequest, res: express.Response) => {
 
     res.status(200).json({ message: "Sucessfully created business." });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
@@ -162,7 +191,7 @@ router.put(
 
       res.status(200).json({ message: "Successfully updated business." });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }

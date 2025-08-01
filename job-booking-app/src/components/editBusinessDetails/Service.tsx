@@ -1,6 +1,10 @@
 import { useState } from "react";
 import DropdownMenu from "../global/DropdownMenu";
 
+interface EditServiceResponse {
+  message: string;
+}
+
 const Service = ({
   defaultName,
   defaultPrice,
@@ -14,18 +18,24 @@ const Service = ({
   defaultDuration: string;
   serviceId: number;
 }) => {
-  const apiBase = import.meta.env.API_BASE;
+  const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [duration, setDuration] = useState("");
+  const [name, setName] = useState(defaultName);
+  const [price, setPrice] = useState(defaultPrice);
+  const [description, setDescription] = useState(defaultDescription);
+  const [duration, setDuration] = useState(defaultDuration);
 
   async function editService() {
     try {
-      const response = await fetch(apiBase + `/services/${serviceId}`, {
+      if (typeof parseInt(price) !== "number") {
+        // Placeholder alert
+        return alert("Please provide a valid price.");
+      }
+
+      const response = await fetch(`${apiBase}/services/${serviceId}`, {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           Authorization: token || "",
         },
         body: JSON.stringify({
@@ -37,8 +47,9 @@ const Service = ({
       });
 
       if (response.ok) {
+        const apiData: EditServiceResponse = await response.json();
         // Placeholder alert
-        console.log("Successfully edited the service.");
+        alert(apiData.message);
       }
     } catch (err) {
       console.error(err);
@@ -66,7 +77,7 @@ const Service = ({
             <label>Price *</label>
             <input
               className="w-full py-1 px-2 border-2 border-neutral-200 rounded-md outline-none"
-              type="number"
+              type="text"
               placeholder="$  0.00"
               maxLength={10}
               required
@@ -106,8 +117,21 @@ const Service = ({
             ></DropdownMenu>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <button className="py-1 px-4 bg-black rounded-sm text-white cursor-pointer" type="button" onClick={() => editService}>Save</button>
-            <button className="py-1 px-4 border-2 border-neutral-200 rounded-sm cursor-pointer" type="button">Delete</button>
+            <button
+              className="py-1 px-4 bg-black rounded-sm text-white cursor-pointer"
+              type="button"
+              onClick={() => {
+                editService();
+              }}
+            >
+              Save
+            </button>
+            <button
+              className="py-1 px-4 border-2 border-neutral-200 rounded-sm cursor-pointer"
+              type="button"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>

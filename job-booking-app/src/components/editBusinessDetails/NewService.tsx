@@ -2,8 +2,12 @@ import { useState } from "react";
 import DropdownMenu from "../global/DropdownMenu";
 import { FaPlus } from "react-icons/fa";
 
-const NewService = () => {
-  const apiBase = import.meta.env.API_BASE;
+interface CreateServiceResponse {
+  message: string;
+}
+
+const NewService = ({ businessId }: { businessId?: number }) => {
+  const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -12,26 +16,29 @@ const NewService = () => {
 
   async function createService() {
     try {
-      if (!apiBase) {
-        return console.log("API_BASE could not be found.");
+      if (typeof parseInt(price) !== "number") {
+        // Placeholder alert
+        return alert("Please provide a valid price.");
       }
 
-      const response = await fetch(apiBase + "", {
+      const response = await fetch(`${apiBase}/services/${businessId}`, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: token || "",
         },
         body: JSON.stringify({
-          name,
-          price,
+          title: name,
+          price: parseInt(price),
           description,
           duration,
         }),
       });
 
       if (response.ok) {
+        const apiData: CreateServiceResponse = await response.json();
         // Placeholder alert
-        alert("Successfully created the service.");
+        alert(apiData.message);
       }
     } catch (err) {
       console.error(err);
@@ -60,7 +67,7 @@ const NewService = () => {
               <label>Price *</label>
               <input
                 className="w-full py-1 px-2 border-2 border-neutral-200 rounded-md outline-none"
-                type="number"
+                type="text"
                 placeholder="$  0.00"
                 maxLength={10}
                 required

@@ -1,5 +1,5 @@
 CREATE TABLE
-    IF NOT EXISTS "users" (
+    IF NOT EXISTS users (
         id BIGSERIAL PRIMARY KEY,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         username VARCHAR(25) UNIQUE NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS "businesses" (
+    IF NOT EXISTS businesses (
         id BIGSERIAL PRIMARY KEY,
         business_owner_id BIGINT NOT NULL,
         FOREIGN KEY (business_owner_id) REFERENCES users (id),
@@ -21,7 +21,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS "services" (
+    IF NOT EXISTS services (
         id BIGSERIAL PRIMARY KEY,
         business_id BIGINT NOT NULL,
         FOREIGN KEY (business_id) REFERENCES businesses (id),
@@ -33,7 +33,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS "bookings" (
+    IF NOT EXISTS bookings (
         id BIGSERIAL PRIMARY KEY,
         business_id BIGINT NOT NULL,
         service_id BIGINT NOT NULL,
@@ -48,13 +48,13 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS "tags" (
+    IF NOT EXISTS tags (
         id BIGSERIAL PRIMARY KEY,
         content VARCHAR(12) UNIQUE
     );
 
 CREATE TABLE
-    IF NOT EXISTS "service_tag" (
+    IF NOT EXISTS service_tag (
         service_id BIGINT NOT NULL,
         tag_id BIGINT NOT NULL,
         PRIMARY KEY (service_id, tag_id),

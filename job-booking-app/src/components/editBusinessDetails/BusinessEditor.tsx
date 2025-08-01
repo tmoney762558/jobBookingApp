@@ -4,6 +4,15 @@ import { useIsInputNumber } from "../customHooks/useIsInputNumber";
 import Service from "./Service";
 import NewService from "./NewService";
 
+interface BusinessData {
+  name: string;
+  location: string;
+  description: string;
+  category: string;
+  phone_number: string;
+  website_link: string;
+}
+
 interface Service {
   id: number;
   name: string;
@@ -17,17 +26,111 @@ const BusinessEditor = ({
   businessId,
 }: {
   operation: string;
-  businessId: number;
+  businessId?: number;
 }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
   const isInputNumber = useIsInputNumber;
+  const [businessData, setBusinessData] = useState<BusinessData>({
+    name: "",
+    location: "",
+    description: "",
+    category: "",
+    phone_number: "",
+    website_link: "",
+  });
   const [savedServices, setSavedServices] = useState<Service[]>([]);
   const [businessNameInput, setBusinessNameInput] = useState("");
   const [businessLocationInput, setBusinessLocationInput] = useState("");
   const [businessDescriptionInput, setBusinessDescriptionInput] = useState("");
   const [businessCategoryInput, setBusinessCategoryInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
+  const [websiteLinkInput, setWebsiteLinkInput] = useState("");
+
+  async function createBusiness() {
+    try {
+      const response = await fetch(`${apiBase}/businesses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token || "",
+        },
+        body: JSON.stringify({
+          name: businessNameInput,
+          location: businessLocationInput,
+          description: businessDescriptionInput,
+          category: businessCategoryInput,
+          phoneNumber: phoneNumberInput,
+          websiteLink: websiteLinkInput,
+        }),
+      });
+
+      if (response.ok) {
+        const apiData = await response.json();
+        alert(apiData.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function editBusiness() {
+    try {
+      const response = await fetch(`${apiBase}/businesses`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token || "",
+        },
+        body: JSON.stringify({
+          name: businessNameInput,
+          location: businessLocationInput,
+          description: businessDescriptionInput,
+          category: businessCategoryInput,
+          phoneNumber: phoneNumberInput,
+          websiteLink: websiteLinkInput,
+        }),
+      });
+
+      if (response.ok) {
+        const apiData = await response.json();
+        // Placeholder alert
+        alert(apiData.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
+    if (isInputNumber(event)) {
+      setPhoneNumberInput(event.target.value);
+    }
+  }
+
+  useEffect(() => {
+    if (operation === "Edit") {
+      async function fetchBusinessInfo() {
+        try {
+          const response = await fetch(`${apiBase}/businesses/${businessId}`, {
+            method: "GET",
+            headers: {
+              Authorization: token || "",
+            },
+          });
+
+          if (response.ok) {
+            const apiData = await response.json();
+            setBusinessData(apiData);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      fetchBusinessInfo();
+    }
+  }, [operation, businessId, apiBase, token]);
 
   useEffect(() => {
     async function fetchServices() {
@@ -51,40 +154,6 @@ const BusinessEditor = ({
     fetchServices();
   }, [token, apiBase, businessId]);
 
-  async function createBusiness() {
-    try {
-      const response = await fetch("http://localhost:3001/businesses", {
-        method: "POST",
-        headers: {
-          Authorization: token || "",
-        },
-        body: JSON.stringify({
-          name: businessNameInput,
-          location: businessLocationInput,
-          description: businessDescriptionInput,
-          category: businessCategoryInput,
-          phoneNumber: phoneNumberInput,
-        }),
-      });
-
-      if (response.ok) {
-        const apiData = await response.json();
-        alert(apiData.message);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function editBusiness() {}
-
-  function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
-    const inputValue = event.target.value;
-    if (isInputNumber(event)) {
-      setPhoneNumberInput(inputValue);
-    }
-  }
-
   return (
     <div className="flex justify-center items-center w-full min-h-[45rem] py-5 overflow-y-auto text-sm">
       <form className="w-full max-w-[45rem] p-5 border-2 border-neutral-200">
@@ -96,6 +165,7 @@ const BusinessEditor = ({
             type="text"
             placeholder="Enter your business name"
             required
+            defaultValue={businessData.name}
             onChange={(e) => {
               setBusinessNameInput(e.target.value);
             }}
@@ -108,6 +178,7 @@ const BusinessEditor = ({
             type="text"
             placeholder="Enter the location of your business"
             required
+            defaultValue={businessData.location}
             onChange={(e) => {
               setBusinessLocationInput(e.target.value);
             }}
@@ -118,6 +189,7 @@ const BusinessEditor = ({
           <textarea
             className="w-full h-20 py-1 px-3 border-2 border-neutral-200 rounded-md outline-none resize-none"
             placeholder="Describe what your business does"
+            defaultValue={businessData.description}
             onChange={(e) => {
               setBusinessDescriptionInput(e.target.value);
             }}
@@ -127,7 +199,11 @@ const BusinessEditor = ({
           <label className="block mt-5 text-sm">Category</label>
           <DropdownMenu
             width={"w-full"}
-            placeholder="Select a category"
+            placeholder={
+              businessData.category
+                ? businessData.category
+                : "Select a category"
+            }
             options={["Towing", "IT Support", "Mechanic"]}
             setterFunction={setBusinessCategoryInput}
           ></DropdownMenu>
@@ -137,13 +213,13 @@ const BusinessEditor = ({
           <Service
             key={index}
             defaultName={service.name}
-            defaultDescription={service.price}
-            defaultPrice={service.description}
+            defaultPrice={service.price}
+            defaultDescription={service.description}
             defaultDuration={service.duration}
             serviceId={service.id}
           ></Service>
         ))}
-        <NewService></NewService>
+        <NewService businessId={businessId}></NewService>
         <div className="w-full h-[1px] mt-7 bg-neutral-200"></div>
         <h2 className="mt-7 text-xl font-bold">Contact Information</h2>
         <div className="flex gap-2 items-center w-full mt-5">
@@ -155,6 +231,7 @@ const BusinessEditor = ({
               placeholder="123-456-7890"
               maxLength={10}
               required
+              defaultValue={businessData.phone_number}
               onChange={(e) => {
                 handlePhoneInput(e);
               }}
@@ -167,6 +244,10 @@ const BusinessEditor = ({
               type="tel"
               placeholder="http://website.com"
               maxLength={40}
+              defaultValue={businessData.website_link}
+              onChange={(e) => {
+                setWebsiteLinkInput(e.target.value);
+              }}
             ></input>
           </div>
         </div>

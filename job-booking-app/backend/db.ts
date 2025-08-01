@@ -4,10 +4,10 @@ dotenv.config({ path: "../.env" });
 
 const pool = new Pool({
     host: "localhost",
-    port: 5433,
+    port: 5432,
     user: "postgres",
-    database: "jobbookingapp",
-    password: "tyler",
+    database: "postgres",
+    password: "postgres",
 });
 
 export default pool;

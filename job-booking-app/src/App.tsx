@@ -5,7 +5,7 @@ const App = () => {
   return (
     <div>
       <Authentication></Authentication>
-      <BusinessEditor operation="create" businessId={2}></BusinessEditor>
+      <BusinessEditor operation="Edit" businessId={1}></BusinessEditor>
     </div>
   );
 };

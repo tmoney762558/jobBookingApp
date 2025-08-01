@@ -8,6 +8,7 @@ interface TokenResponse extends Response {
 }
 
 const Authentication = () => {
+  const apiBase = import.meta.env.VITE_API_BASE;
   const [operation, setOperation] = useState("Sign In");
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -15,7 +16,7 @@ const Authentication = () => {
 
   async function handleSignIn() {
     try {
-      const response = await fetch("http://localhost:3001/auth/login", {
+      const response = await fetch(`${apiBase}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,13 +34,13 @@ const Authentication = () => {
         localStorage.setItem("token", apiData.token);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 
   async function handleSignUp() {
     try {
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await fetch(`${apiBase}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +58,7 @@ const Authentication = () => {
         localStorage.setItem("token", apiData.token);
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   }
 

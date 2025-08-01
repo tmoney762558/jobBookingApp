@@ -67,7 +67,7 @@ router.get(
 
       res.status(200).json(businessServices.rows);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
@@ -123,13 +123,14 @@ router.post(
 
       res.status(200).json({ message: "Successfully created service." });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
 );
 
 // Edit a service for a business
+// TODO: Add the rest of the editable fields
 router.put(
   "/:serviceId",
   async (req: AuthenticatedRequest, res: express.Response) => {
@@ -141,7 +142,7 @@ router.put(
       if (
         typeof title !== "string" ||
         !title ||
-        typeof price !== "number" ||
+        (typeof price !== "string" && typeof price !== "number") ||
         !price ||
         typeof description !== "string" ||
         !description ||
@@ -156,18 +157,18 @@ router.put(
 
       const updatedService = await pool.query(
         `
-                UPDATE services s
-                SET service_title = $1, price = $2, description = $3, duration = $4
-                FROM businesses b
-                WHERE s.business_id = b.id
-                AND b.business_owner_id = $5
-                AND s.id = $6
-                RETURNING s.id
+        UPDATE services s
+        SET name = $1, price = $2, description = $3, duration = $4
+        FROM businesses b
+        WHERE s.business_id = b.id
+        AND b.business_owner_id = $5
+        AND s.id = $6
+        RETURNING s.id
         `,
         [title, price, description, duration, userId, serviceId]
       );
 
-      if (typeof typeof parseInt(serviceId) !== "number") {
+      if (typeof parseInt(serviceId) !== "number") {
         res.status(400).json({ message: "Invalid parameters." });
         return;
       }
