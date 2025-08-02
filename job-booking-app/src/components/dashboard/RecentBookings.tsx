@@ -11,22 +11,19 @@ interface RecentBooking {
 }
 
 const RecentBookings = ({ businessId }: { businessId: number }) => {
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJpYXQiOjE3NTI2OTAzNzAsImV4cCI6MTc1Mjc3Njc3MH0.yDGg1k18jww9Jc52W0jaQ8xbArvrdiqipDB5EHMeZR4";
+  const apiBase = import.meta.env.VITE_API_BASE;
+  const token = localStorage.getItem("token");
   const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([]);
 
   useEffect(() => {
     async function fetchRecentBookings() {
       try {
-        const response = await fetch(
-          `http://localhost:3001/bookings/${businessId}/top`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: token || "",
-            },
-          }
-        );
+        const response = await fetch(`${apiBase}/bookings/${businessId}`, {
+          method: "GET",
+          headers: {
+            Authorization: token || "",
+          },
+        });
 
         if (response.ok) {
           const apiData: RecentBooking[] = await response.json();
@@ -38,7 +35,7 @@ const RecentBookings = ({ businessId }: { businessId: number }) => {
     }
 
     fetchRecentBookings();
-  }, [token, businessId]);
+  }, [apiBase, token, businessId]);
 
   return (
     <div className="w-full md:h-[20rem] h-[15rem] mt-5 pb-7 border-2 border-neutral-200 rounded-md overflow-y-auto">

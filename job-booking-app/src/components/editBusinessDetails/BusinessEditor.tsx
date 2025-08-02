@@ -1,8 +1,11 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import DropdownMenu from "../global/DropdownMenu";
 import { useIsInputNumber } from "../customHooks/useIsInputNumber";
 import Service from "./Service";
 import NewService from "./NewService";
+
+// TODO: Add and delete services
+// on the frontend instead of refetching
 
 interface BusinessData {
   name: string;
@@ -102,6 +105,27 @@ const BusinessEditor = ({
     }
   }
 
+  const fetchServices = useCallback(
+    async function fetchServices() {
+      try {
+        const response = await fetch(`${apiBase}/services/${businessId}`, {
+          method: "GET",
+          headers: {
+            Authorization: token || "",
+          },
+        });
+
+        if (response.ok) {
+          const apiData = await response.json();
+          setSavedServices(apiData);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [apiBase, businessId, token]
+  );
+
   function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
     if (isInputNumber(event)) {
       setPhoneNumberInput(event.target.value);
@@ -133,26 +157,8 @@ const BusinessEditor = ({
   }, [operation, businessId, apiBase, token]);
 
   useEffect(() => {
-    async function fetchServices() {
-      try {
-        const response = await fetch(`${apiBase}/services/${businessId}`, {
-          method: "GET",
-          headers: {
-            Authorization: token || "",
-          },
-        });
-
-        if (response.ok) {
-          const apiData = await response.json();
-          setSavedServices(apiData);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
     fetchServices();
-  }, [token, apiBase, businessId]);
+  }, [fetchServices]);
 
   return (
     <div className="flex justify-center items-center w-full min-h-[45rem] py-5 overflow-y-auto text-sm">
@@ -199,11 +205,7 @@ const BusinessEditor = ({
           <label className="block mt-5 text-sm">Category</label>
           <DropdownMenu
             width={"w-full"}
-            placeholder={
-              businessData.category
-                ? businessData.category
-                : "Select a category"
-            }
+            placeholder={businessData.category}
             options={["Towing", "IT Support", "Mechanic"]}
             setterFunction={setBusinessCategoryInput}
           ></DropdownMenu>
@@ -217,9 +219,13 @@ const BusinessEditor = ({
             defaultDescription={service.description}
             defaultDuration={service.duration}
             serviceId={service.id}
+            fetchServices={fetchServices}
           ></Service>
         ))}
-        <NewService businessId={businessId}></NewService>
+        <NewService
+          businessId={businessId}
+          fetchServices={fetchServices}
+        ></NewService>
         <div className="w-full h-[1px] mt-7 bg-neutral-200"></div>
         <h2 className="mt-7 text-xl font-bold">Contact Information</h2>
         <div className="flex gap-2 items-center w-full mt-5">

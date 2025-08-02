@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiCaretDown } from "react-icons/bi";
 
 const DropdownMenu = ({
@@ -13,7 +13,11 @@ const DropdownMenu = ({
   setterFunction: (option: string) => void;
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [dropdownSelection, setDropdownSelection] = useState(placeholder);
+  const [dropdownSelection, setDropdownSelection] = useState("");
+
+  useEffect(() => {
+    setDropdownSelection(placeholder);
+  }, [placeholder]);
 
   return (
     <div className={`flex flex-col gap-2 ${width}`}>

@@ -6,7 +6,13 @@ interface CreateServiceResponse {
   message: string;
 }
 
-const NewService = ({ businessId }: { businessId?: number }) => {
+const NewService = ({
+  businessId,
+  fetchServices,
+}: {
+  businessId?: number;
+  fetchServices: () => void;
+}) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
   const [name, setName] = useState("");
@@ -16,11 +22,6 @@ const NewService = ({ businessId }: { businessId?: number }) => {
 
   async function createService() {
     try {
-      if (typeof parseInt(price) !== "number") {
-        // Placeholder alert
-        return alert("Please provide a valid price.");
-      }
-
       const response = await fetch(`${apiBase}/services/${businessId}`, {
         method: "POST",
         headers: {
@@ -36,9 +37,13 @@ const NewService = ({ businessId }: { businessId?: number }) => {
       });
 
       if (response.ok) {
+        fetchServices();
         const apiData: CreateServiceResponse = await response.json();
         // Placeholder alert
         alert(apiData.message);
+      } else {
+        const errorData: CreateServiceResponse = await response.json();
+        alert(errorData.message);
       }
     } catch (err) {
       console.error(err);

@@ -142,8 +142,6 @@ router.put(
       if (
         typeof title !== "string" ||
         !title ||
-        (typeof price !== "string" && typeof price !== "number") ||
-        !price ||
         typeof description !== "string" ||
         !description ||
         typeof duration !== "string" ||
@@ -152,6 +150,18 @@ router.put(
         res.status(400).json({
           message: "One or more fields were invalid or not provided.",
         });
+        return;
+      }
+
+      if (isNaN(parseInt(price.slice(1))) || !price) {
+        res
+          .status(400)
+          .json({ message: "Invalid price format. Please type value in USD." });
+        return;
+      }
+
+      if (typeof parseInt(serviceId) !== "number") {
+        res.status(400).json({ message: "Invalid parameters." });
         return;
       }
 
@@ -167,11 +177,6 @@ router.put(
         `,
         [title, price, description, duration, userId, serviceId]
       );
-
-      if (typeof parseInt(serviceId) !== "number") {
-        res.status(400).json({ message: "Invalid parameters." });
-        return;
-      }
 
       if (!updatedService.rows[0]) {
         res.status(400).json({

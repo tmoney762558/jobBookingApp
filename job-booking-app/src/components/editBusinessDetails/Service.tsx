@@ -11,12 +11,14 @@ const Service = ({
   defaultDescription,
   defaultDuration,
   serviceId,
+  fetchServices,
 }: {
   defaultName: string;
   defaultPrice: string;
   defaultDescription: string;
   defaultDuration: string;
   serviceId: number;
+  fetchServices: () => void;
 }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
@@ -27,11 +29,6 @@ const Service = ({
 
   async function editService() {
     try {
-      if (typeof parseInt(price) !== "number") {
-        // Placeholder alert
-        return alert("Please provide a valid price.");
-      }
-
       const response = await fetch(`${apiBase}/services/${serviceId}`, {
         method: "PUT",
         headers: {
@@ -50,6 +47,29 @@ const Service = ({
         const apiData: EditServiceResponse = await response.json();
         // Placeholder alert
         alert(apiData.message);
+      } else {
+        const errorData: EditServiceResponse = await response.json();
+        // Placeholder alert
+        alert(errorData.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function deleteService() {
+    try {
+      const response = await fetch(`${apiBase}/services/${serviceId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token || "",
+        },
+      });
+
+      if (response.ok) {
+        fetchServices();
+        // Placeholder alert
+        alert("Successfully deleted service.");
       }
     } catch (err) {
       console.error(err);
@@ -129,6 +149,9 @@ const Service = ({
             <button
               className="py-1 px-4 border-2 border-neutral-200 rounded-sm cursor-pointer"
               type="button"
+              onClick={() => {
+                deleteService();
+              }}
             >
               Delete
             </button>
