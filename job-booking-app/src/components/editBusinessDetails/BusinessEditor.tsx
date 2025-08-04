@@ -144,6 +144,7 @@ const BusinessEditor = ({
           });
 
           if (response.ok) {
+            // TODO: Add typing for the apiData
             const apiData = await response.json();
             setBusinessData(apiData);
           }

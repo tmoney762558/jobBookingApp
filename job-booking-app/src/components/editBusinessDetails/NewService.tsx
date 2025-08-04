@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import DropdownMenu from "../global/DropdownMenu";
 import { FaPlus } from "react-icons/fa";
 
@@ -15,9 +15,9 @@ const NewService = ({
 }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const nameInput = useRef<HTMLInputElement>(null);
+  const priceInput = useRef<HTMLInputElement>(null);
+  const descriptionInput = useRef<HTMLTextAreaElement>(null);
   const [duration, setDuration] = useState("");
 
   async function createService() {
@@ -29,9 +29,11 @@ const NewService = ({
           Authorization: token || "",
         },
         body: JSON.stringify({
-          title: name,
-          price: parseInt(price),
-          description,
+          title: nameInput.current ? nameInput.current.value : "",
+          price: priceInput.current ? priceInput.current.value : "",
+          description: descriptionInput.current
+            ? descriptionInput.current.value
+            : "",
           duration,
         }),
       });
@@ -41,6 +43,15 @@ const NewService = ({
         const apiData: CreateServiceResponse = await response.json();
         // Placeholder alert
         alert(apiData.message);
+        if (
+          nameInput.current &&
+          priceInput.current &&
+          descriptionInput.current
+        ) {
+          nameInput.current.value = "";
+          priceInput.current.value = "";
+          descriptionInput.current.value = "";
+        }
       } else {
         const errorData: CreateServiceResponse = await response.json();
         alert(errorData.message);
@@ -63,9 +74,7 @@ const NewService = ({
                 placeholder="e.g. Logo Design"
                 maxLength={25}
                 required
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
+                ref={nameInput}
               ></input>
             </div>
             <div className="flex flex-1 flex-col gap-2">
@@ -76,9 +85,7 @@ const NewService = ({
                 placeholder="$  0.00"
                 maxLength={10}
                 required
-                onChange={(e) => {
-                  setPrice(e.target.value);
-                }}
+                ref={priceInput}
               ></input>
             </div>
           </div>
@@ -87,9 +94,7 @@ const NewService = ({
             <textarea
               className="w-full h-20 py-1 px-3 border-2 border-neutral-200 rounded-md outline-none resize-none"
               placeholder="Describe the sevice"
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
+              ref={descriptionInput}
             ></textarea>
           </div>
           <div className="flex justify-between items-center w-full mt-4">

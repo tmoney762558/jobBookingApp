@@ -2,7 +2,13 @@ import { FaBriefcase, FaSearch } from "react-icons/fa";
 import genericUser1 from "../../assets/genericUser1.svg";
 import { CiBellOn } from "react-icons/ci";
 
-const TopNav = () => {
+const TopNav = ({
+  setSearchQuery,
+  fetchMatchingServices,
+}: {
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+  fetchMatchingServices: () => Promise<void>;
+}) => {
   return (
     <nav className="flex justify-between items-center gap-3 w-full py-2">
       <div className="flex items-center gap-3 w-full">
@@ -12,13 +18,22 @@ const TopNav = () => {
           </div>
           <p className="lg:block hidden font-bold">JobBooker</p>
         </div>
-        <div className="flex items-center relative w-full">
+        <form
+          className="flex items-center relative w-full"
+          onSubmit={(e) => {
+            e.preventDefault();
+            fetchMatchingServices();
+          }}
+        >
           <FaSearch className="absolute left-2" fontSize={"0.75rem"}></FaSearch>
           <input
             className="w-full max-w-[20rem] py-1 pl-7 bg-neutral-200 rounded-md text-sm"
-            placeholder="Search for Businesses"
+            placeholder="Search for Services"
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
           ></input>
-        </div>
+        </form>
       </div>
       <div className="flex items-center gap-3">
         <CiBellOn className="shrink-0 text-[1.7rem]"></CiBellOn>

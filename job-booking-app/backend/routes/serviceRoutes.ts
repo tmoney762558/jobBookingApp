@@ -11,29 +11,36 @@ const router = express.Router();
 router.get(
   "/search",
   async (req: AuthenticatedRequest, res: express.Response) => {
-    const { query } = req.query;
+    try {
+      const { query } = req.query;
 
-    if (!query) {
-      res.status(400).json({ message: "Query was not provided." });
-    }
+      if (!query) {
+        res.status(400).json({ message: "Query was not provided." });
+        return;
+      }
 
-    const searchQuery = await pool.query(
-      `
-            SELECT name, price, description, duration
+      const searchQuery = await pool.query(
+        `
+            SELECT services.name AS service_name, services.price, services.description, services.duration,
+            businesses.name AS business_name, businesses.location
             FROM services
-            WHERE name ILIKE $1
+            LEFT JOIN businesses ON businesses.id = services.business_id
+            WHERE services.name ILIKE $1
         `,
-      [query + "%"]
-    );
+        [query + "%"]
+      );
 
-    if (!searchQuery.rows[0]) {
-      res
-        .status(400)
-        .json({ message: "Could not find any matching services." });
-      return;
+      if (!searchQuery.rows[0]) {
+        res
+          .status(400)
+          .json({ message: "Could not find any matching services." });
+        return;
+      }
+
+      res.status(200).json(searchQuery.rows);
+    } catch (err) {
+      console.error(err);
     }
-
-    res.status(200).json(searchQuery.rows);
   }
 );
 
@@ -85,16 +92,21 @@ router.post(
       if (
         typeof title !== "string" ||
         !title ||
-        typeof price !== "number" ||
-        !price ||
         typeof description !== "string" ||
         !description ||
         typeof duration !== "string" ||
         !duration
       ) {
+        res.status(400).json({
+          message: "One or more fields were invalid or not provided.",
+        });
+        return;
+      }
+
+      if (!price || isNaN(parseInt(price.slice(1)))) {
         res
           .status(400)
-          .json({ message: "One or fields were invalid or not provided." });
+          .json({ message: "Invalid price format. Please type value in USD." });
         return;
       }
 
@@ -130,7 +142,6 @@ router.post(
 );
 
 // Edit a service for a business
-// TODO: Add the rest of the editable fields
 router.put(
   "/:serviceId",
   async (req: AuthenticatedRequest, res: express.Response) => {
@@ -161,7 +172,7 @@ router.put(
       }
 
       if (typeof parseInt(serviceId) !== "number") {
-        res.status(400).json({ message: "Invalid parameters." });
+        res.status(400).json({ message: "Invalid service id." });
         return;
       }
 
