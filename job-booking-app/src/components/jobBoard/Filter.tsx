@@ -30,15 +30,19 @@ const Filter = () => {
         <ul className="flex flex-col gap-2 mt-2 text-sm">
           <li className="flex items-center gap-2">
             <input type="checkbox"></input>
-            <label>Full-time</label>
+            <label>Labor</label>
           </li>
           <li className="flex items-center gap-2">
             <input type="checkbox"></input>
-            <label>Part-time</label>
+            <label>Education</label>
           </li>
           <li className="flex items-center gap-2">
             <input type="checkbox"></input>
-            <label>Contract</label>
+            <label>Childcare</label>
+          </li>
+          <li className="flex items-center gap-2">
+            <input type="checkbox"></input>
+            <label>Entertainment</label>
           </li>
           <li className="flex items-center gap-2">
             <input type="checkbox"></input>

@@ -32,7 +32,7 @@ const Service = ({
         </div>
         <div className="flex items-center gap-1">
           <FaDollarSign className="fill-neutral-600"></FaDollarSign>
-          <p>${price}</p>
+          <p>{price}</p>
         </div>
       </div>
       <p className="mt-2 text-sm">{description}</p>

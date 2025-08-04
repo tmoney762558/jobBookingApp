@@ -8,8 +8,10 @@ const FilterSm = () => {
 
   return (
     <div>
-      <div className="lg:hidden block w-fit mt-2 p-2 bg-black
-       rounded-md cursor-pointer">
+      <div
+        className="lg:hidden block w-fit mt-2 p-2 bg-black
+       rounded-md cursor-pointer"
+      >
         <FaFilter
           className="fill-white"
           onClick={() => setFilterOpen(!filterOpen)}
@@ -39,15 +41,19 @@ const FilterSm = () => {
             <ul className="flex flex-col gap-2 mt-2 text-sm">
               <li className="flex items-center gap-2">
                 <input type="checkbox"></input>
-                <label>Full-time</label>
+                <label>Labor</label>
               </li>
               <li className="flex items-center gap-2">
                 <input type="checkbox"></input>
-                <label>Part-time</label>
+                <label>Education</label>
               </li>
               <li className="flex items-center gap-2">
                 <input type="checkbox"></input>
-                <label>Contract</label>
+                <label>Childcare</label>
+              </li>
+              <li className="flex items-center gap-2">
+                <input type="checkbox"></input>
+                <label>Entertainment</label>
               </li>
               <li className="flex items-center gap-2">
                 <input type="checkbox"></input>
