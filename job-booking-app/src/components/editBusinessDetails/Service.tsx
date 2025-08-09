@@ -10,6 +10,7 @@ const Service = ({
   defaultPrice,
   defaultDescription,
   defaultDuration,
+  defaultCategory,
   serviceId,
   fetchServices,
 }: {
@@ -17,6 +18,7 @@ const Service = ({
   defaultPrice: string;
   defaultDescription: string;
   defaultDuration: string;
+  defaultCategory: string;
   serviceId: number;
   fetchServices: () => void;
 }) => {
@@ -26,6 +28,7 @@ const Service = ({
   const [price, setPrice] = useState(defaultPrice);
   const [description, setDescription] = useState(defaultDescription);
   const [duration, setDuration] = useState(defaultDuration);
+  const [category, setCategory] = useState(defaultCategory);
 
   async function editService() {
     try {
@@ -40,6 +43,7 @@ const Service = ({
           price,
           description,
           duration,
+          category
         }),
       });
 
@@ -120,21 +124,38 @@ const Service = ({
           ></textarea>
         </div>
         <div className="flex justify-between items-center w-full mt-4">
-          <div className="flex items-center gap-4">
-            <label className="font-bold">Duration</label>
-            <DropdownMenu
-              width={"w-[6.5rem]"}
-              placeholder={defaultDuration}
-              options={[
-                "1 hour",
-                "2 hours",
-                "3 hours",
-                "4 hours",
-                "5 hours",
-                "6 hours",
-              ]}
-              setterFunction={setDuration}
-            ></DropdownMenu>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
+              <label className="font-bold">Duration</label>
+              <DropdownMenu
+                width={"w-[6.5rem]"}
+                placeholder={defaultDuration}
+                options={[
+                  "1 hour",
+                  "2 hours",
+                  "3 hours",
+                  "4 hours",
+                  "5 hours",
+                  "6 hours",
+                ]}
+                setterFunction={setDuration}
+              ></DropdownMenu>
+            </div>
+            <div className="flex items-center gap-4">
+              <label className="font-bold">Category</label>
+              <DropdownMenu
+                width={"w-[6.5rem"}
+                placeholder={defaultCategory}
+                options={[
+                  "Labor",
+                  "Education",
+                  "Childcare",
+                  "Entertainment",
+                  "Freelance",
+                ]}
+                setterFunction={setCategory}
+              ></DropdownMenu>
+            </div>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <button

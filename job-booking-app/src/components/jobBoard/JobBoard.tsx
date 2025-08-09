@@ -22,11 +22,12 @@ const JobBoard = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [orderBy, setOrderBy] = useState<string>("Most Relevant");
   const [services, setServices] = useState<Service[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
 
   async function fetchMatchingServices() {
     try {
       const response = await fetch(
-        `${apiBase}/services/search?query=${searchQuery}&orderBy=${orderBy}`,
+        `${apiBase}/services/search?query=${searchQuery}&category=${categoryFilter}&orderBy=${orderBy}`,
         {
           method: "GET",
           headers: {
@@ -51,10 +52,17 @@ const JobBoard = () => {
   return (
     <div className="flex justify-center w-full min-h-[35rem] h-screen md:px-4 px-2">
       <div className="w-full max-w-[75rem]">
-        <TopNav setSearchQuery={setSearchQuery} fetchMatchingServices={fetchMatchingServices}></TopNav>
+        <TopNav
+          setSearchQuery={setSearchQuery}
+          fetchMatchingServices={fetchMatchingServices}
+        ></TopNav>
         <div className="flex items-start gap-5 w-full mt-5">
-          <Filter></Filter>
-          <JobDisplay setOrderBy={setOrderBy} services={services}></JobDisplay>
+          <Filter setCategoryFilter={setCategoryFilter}></Filter>
+          <JobDisplay
+            setCategoryFilter={setCategoryFilter}
+            setOrderBy={setOrderBy}
+            services={services}
+          ></JobDisplay>
         </div>
       </div>
     </div>

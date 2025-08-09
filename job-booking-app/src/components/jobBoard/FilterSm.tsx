@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { CiLocationOn } from "react-icons/ci";
 import { FaFilter } from "react-icons/fa";
-import DropdownMenu from "../global/DropdownMenu";
 
-const FilterSm = () => {
+const FilterSm = ({
+  setCategoryFilter,
+}: {
+  setCategoryFilter: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [filterOpen, setFilterOpen] = useState(false);
 
   return (
@@ -40,23 +43,53 @@ const FilterSm = () => {
             <p className="mt-7 font-semibold">Job Type</p>
             <ul className="flex flex-col gap-2 mt-2 text-sm">
               <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
+                <input
+                  name="categoryFilter"
+                  type="radio"
+                  onClick={() => {
+                    setCategoryFilter("Labor");
+                  }}
+                ></input>
                 <label>Labor</label>
               </li>
               <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
+                <input
+                  name="categoryFilter"
+                  type="radio"
+                  onClick={() => {
+                    setCategoryFilter("Education");
+                  }}
+                ></input>
                 <label>Education</label>
               </li>
               <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
+                <input
+                  name="categoryFilter"
+                  type="radio"
+                  onClick={() => {
+                    setCategoryFilter("Childcare");
+                  }}
+                ></input>
                 <label>Childcare</label>
               </li>
               <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
+                <input
+                  name="categoryFilter"
+                  type="radio"
+                  onClick={() => {
+                    setCategoryFilter("Entertainment");
+                  }}
+                ></input>
                 <label>Entertainment</label>
               </li>
               <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
+                <input
+                  name="categoryFilter"
+                  type="radio"
+                  onClick={() => {
+                    setCategoryFilter("Freelance");
+                  }}
+                ></input>
                 <label>Freelance</label>
               </li>
             </ul>
@@ -89,13 +122,6 @@ const FilterSm = () => {
                 type="number"
                 placeholder="Max"
               ></input>
-            </div>
-            <div className="mt-3">
-              <DropdownMenu
-                width="w-full"
-                placeholder="Salary"
-                options={["Salary", "Hourly", "Fee"]}
-              ></DropdownMenu>
             </div>
             <button
               className="w-full mt-3 py-2 bg-black rounded-md text-white font-semibold cursor-pointer"

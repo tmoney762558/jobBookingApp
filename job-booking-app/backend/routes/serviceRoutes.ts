@@ -12,22 +12,43 @@ router.get(
   "/search",
   async (req: AuthenticatedRequest, res: express.Response) => {
     try {
-      const { query } = req.query;
+      const { query, category, orderBy } = req.query;
 
-      if (!query) {
+      if (!query && !orderBy) {
         res.status(400).json({ message: "Query was not provided." });
         return;
       }
 
+      if (
+        category !== "Labor" &&
+        category !== "Education" &&
+        category !== "Childcare" &&
+        category !== "Entertainment" &&
+        category !== "Freelance" &&
+        category !== ""
+      ) {
+        res.status(400).json({ message: "Invalid query parameters." });
+        return;
+      }
+
+      let categoryQuery: string;
+
+      if (category === "") {
+        categoryQuery = "";
+      } else {
+        categoryQuery = `AND services.category = $2`;
+      }
+
       const searchQuery = await pool.query(
         `
-            SELECT services.name AS service_name, services.price, services.description, services.duration,
+            SELECT services.name AS service_name, services.price, services.description, services.duration, services.category,
             businesses.name AS business_name, businesses.location
             FROM services
             LEFT JOIN businesses ON businesses.id = services.business_id
             WHERE services.name ILIKE $1
+            ${categoryQuery}
         `,
-        [query + "%"]
+        category === "" ? [query + "%"] : [query + "%", category]
       );
 
       if (!searchQuery.rows[0]) {
@@ -58,7 +79,7 @@ router.get(
 
       const businessServices = await pool.query(
         `
-            SELECT id, name, price, description, duration
+            SELECT id, name, price, description, duration, category
             FROM services
             WHERE business_id = $1
         `,
@@ -87,7 +108,7 @@ router.post(
     try {
       const userId = req.userId;
       const { businessId } = req.params;
-      const { title, price, description, duration } = req.body;
+      const { title, price, description, duration, category } = req.body;
 
       if (
         typeof title !== "string" ||
@@ -95,7 +116,9 @@ router.post(
         typeof description !== "string" ||
         !description ||
         typeof duration !== "string" ||
-        !duration
+        !duration ||
+        typeof category !== "string" ||
+        !category
       ) {
         res.status(400).json({
           message: "One or more fields were invalid or not provided.",
@@ -115,15 +138,27 @@ router.post(
         return;
       }
 
+      if (
+        category !== "Labor" &&
+        category !== "Education" &&
+        category !== "Childcare" &&
+        category !== "Entertainment" &&
+        category !== "Freelance" &&
+        category !== "All"
+      ) {
+        res.status(400).json({ message: "Invalid category." });
+        return;
+      }
+
       const newService = await pool.query(
         `
-            INSERT INTO services (business_id, name, price, description, duration)
-            SELECT b.id, $1, $2, $3, $4
+            INSERT INTO services (business_id, name, price, description, duration, category)
+            SELECT b.id, $1, $2, $3, $4, $5
             FROM businesses b
-            WHERE b.id = $5 AND b.business_owner_id = $6
+            WHERE b.id = $6 AND b.business_owner_id = $7
             RETURNING id
         `,
-        [title, price, description, duration, businessId, userId]
+        [title, price, description, duration, category, businessId, userId]
       );
 
       if (!newService.rows[0]) {
@@ -148,7 +183,7 @@ router.put(
     try {
       const userId = req.userId;
       const { serviceId } = req.params;
-      const { title, price, description, duration } = req.body;
+      const { title, price, description, duration, category } = req.body;
 
       if (
         typeof title !== "string" ||
@@ -156,7 +191,9 @@ router.put(
         typeof description !== "string" ||
         !description ||
         typeof duration !== "string" ||
-        !duration
+        !duration ||
+        typeof category !== "string" ||
+        !category
       ) {
         res.status(400).json({
           message: "One or more fields were invalid or not provided.",
@@ -168,6 +205,18 @@ router.put(
         res
           .status(400)
           .json({ message: "Invalid price format. Please type value in USD." });
+        return;
+      }
+
+      if (
+        category !== "Labor" &&
+        category !== "Education" &&
+        category !== "Childcare" &&
+        category !== "Entertainment" &&
+        category !== "Freelance" &&
+        category !== "All"
+      ) {
+        res.status(400).json({ message: "Invalid category." });
         return;
       }
 

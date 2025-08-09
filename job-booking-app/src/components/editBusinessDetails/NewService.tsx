@@ -19,8 +19,17 @@ const NewService = ({
   const priceInput = useRef<HTMLInputElement>(null);
   const descriptionInput = useRef<HTMLTextAreaElement>(null);
   const [duration, setDuration] = useState("");
+  const [category, setCategory] = useState("");
 
   async function createService() {
+    if (
+      !nameInput.current ||
+      !priceInput.current ||
+      !descriptionInput.current
+    ) {
+      return;
+    }
+    
     try {
       const response = await fetch(`${apiBase}/services/${businessId}`, {
         method: "POST",
@@ -35,6 +44,7 @@ const NewService = ({
             ? descriptionInput.current.value
             : "",
           duration,
+          category,
         }),
       });
 
@@ -43,15 +53,9 @@ const NewService = ({
         const apiData: CreateServiceResponse = await response.json();
         // Placeholder alert
         alert(apiData.message);
-        if (
-          nameInput.current &&
-          priceInput.current &&
-          descriptionInput.current
-        ) {
-          nameInput.current.value = "";
-          priceInput.current.value = "";
-          descriptionInput.current.value = "";
-        }
+        nameInput.current.value = "";
+        priceInput.current.value = "";
+        descriptionInput.current.value = "";
       } else {
         const errorData: CreateServiceResponse = await response.json();
         alert(errorData.message);
@@ -113,6 +117,21 @@ const NewService = ({
                 ]}
                 setterFunction={setDuration}
               ></DropdownMenu>
+              <div className="flex items-center gap-4">
+                <label className="font-bold">Category</label>
+                <DropdownMenu
+                  width={"w-[9rem]"}
+                  placeholder={"Category"}
+                  options={[
+                    "Labor",
+                    "Education",
+                    "Childcare",
+                    "Entertainment",
+                    "Freelance",
+                  ]}
+                  setterFunction={setCategory}
+                ></DropdownMenu>
+              </div>
             </div>
           </div>
         </div>

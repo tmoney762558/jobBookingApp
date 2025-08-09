@@ -12,9 +12,11 @@ interface Service {
 }
 
 const JobDisplay = ({
+  setCategoryFilter,
   setOrderBy,
   services,
 }: {
+  setCategoryFilter: React.Dispatch<React.SetStateAction<string>>;
   setOrderBy: React.Dispatch<React.SetStateAction<string>>;
   services: Service[];
 }) => {
@@ -33,9 +35,9 @@ const JobDisplay = ({
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <p className="md:mt-0 mt-2 text-sm">{services.length}</p>
+        <p className="md:mt-0 mt-2 text-sm">{services.length} Services Found</p>
         <div className="lg:hidden block">
-          <FilterSm></FilterSm>
+          <FilterSm setCategoryFilter={setCategoryFilter}></FilterSm>
         </div>
       </div>
       <div className="flex flex-col gap-3 w-full max-h-[70vh] min-h-[20rem] mt-5 overflow-y-auto">

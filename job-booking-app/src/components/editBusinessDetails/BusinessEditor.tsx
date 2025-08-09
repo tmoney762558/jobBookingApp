@@ -22,6 +22,7 @@ interface Service {
   price: string;
   description: string;
   duration: string;
+  category: string;
 }
 
 const BusinessEditor = ({
@@ -219,6 +220,7 @@ const BusinessEditor = ({
             defaultPrice={service.price}
             defaultDescription={service.description}
             defaultDuration={service.duration}
+            defaultCategory={service.category}
             serviceId={service.id}
             fetchServices={fetchServices}
           ></Service>

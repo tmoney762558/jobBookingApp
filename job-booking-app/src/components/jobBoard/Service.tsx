@@ -47,7 +47,6 @@ const Service = ({
         </div>
         */}
         <div className="flex justify-end items-center w-full gap-2">
-          <p>2 days ago</p>
           <button className="py-1 px-4 bg-black rounded-sm text-white font-semibold">
             Book Now
           </button>

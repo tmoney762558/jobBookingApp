@@ -29,7 +29,8 @@ CREATE TABLE
         name VARCHAR(25) NOT NULL,
         price MONEY NOT NULL,
         description VARCHAR(75),
-        duration VARCHAR(7)
+        duration VARCHAR(7),
+        category VARCHAR(15)
     );
 
 CREATE TABLE
