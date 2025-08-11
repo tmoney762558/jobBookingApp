@@ -49,6 +49,23 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    IF NOT EXISTS ratings (
+        id BIGSERIAL PRIMARY KEY,
+        customer_id BIGINT NOT NULL,
+        FOREIGN KEY (customer_id) REFERENCES users (id) ON DELETE CASCADE,
+        rating INT CHECK (rating <= 5)
+    );
+
+CREATE TABLE
+    IF NOT EXISTS business_ratings (
+        id BIGSERIAL PRIMARY KEY,
+        business_id BIGINT NOT NULL,
+        rating_id BIGINT NOT NULL,
+        FOREIGN KEY (business_id) REFERENCES businesses (id) ON DELETE CASCADE,
+        FOREIGN KEY (rating_id) REFERENCES ratings (id) ON DELETE CASCADE
+    );
+
+CREATE TABLE
     IF NOT EXISTS tags (
         id BIGSERIAL PRIMARY KEY,
         content VARCHAR(12) UNIQUE

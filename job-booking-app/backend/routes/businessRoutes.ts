@@ -30,6 +30,35 @@ router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
   }
 });
 
+// Get the 10 highest rated businesses
+router.get("/top", async (req: AuthenticatedRequest, res: express.Response) => {
+  try {
+    const topBusinesses = await pool.query(
+      `
+      SELECT b.id, b.name, b.category, b.description,
+      AVG(r.rating) AS avg_rating,
+      COUNT(r.rating) AS total_reviews
+      FROM businesses b
+      JOIN business_ratings br ON b.id = br.business_id
+      JOIN ratings r ON br.rating_id = r.id
+      GROUP BY b.id, b.name
+      ORDER BY avg_rating
+      LIMIT 10
+      `
+    );
+
+    if (!topBusinesses.rows[0]) {
+      res.status(404).json({ message: "No businesses found." });
+      return;
+    }
+
+    res.status(200).json(topBusinesses);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 // Get a list of businesses for a user
 router.get(
   "/:businessId",
