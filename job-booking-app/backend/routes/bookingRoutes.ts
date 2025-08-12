@@ -52,6 +52,11 @@ router.get(
       const userId = req.userId;
       const { businessId } = req.params;
 
+      if (isNaN(parseInt(businessId)) || !businessId) {
+        res.status(400).json({ message: "Business ID not provided." });
+        return;
+      }
+
       const bookings = await pool.query(
         `
         SELECT 

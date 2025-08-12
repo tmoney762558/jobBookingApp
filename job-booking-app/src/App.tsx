@@ -1,13 +1,11 @@
 import Authentication from "./components/authentication/Authentication";
-import CustomerLanding from "./components/customerLanding/CustomerLanding";
-import BusinessEditor from "./components/editBusinessDetails/BusinessEditor";
+import Dashboard from "./components/dashboard/Dashboard";
 
 const App = () => {
   return (
     <div>
       <Authentication></Authentication>
-      <BusinessEditor operation="Create"></BusinessEditor>
-      <CustomerLanding></CustomerLanding>
+      <Dashboard businessId={1}></Dashboard>
     </div>
   );
 };
