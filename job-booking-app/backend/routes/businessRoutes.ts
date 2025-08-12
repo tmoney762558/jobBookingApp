@@ -52,7 +52,7 @@ router.get("/top", async (req: AuthenticatedRequest, res: express.Response) => {
       return;
     }
 
-    res.status(200).json(topBusinesses);
+    res.status(200).json(topBusinesses.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error" });

@@ -72,7 +72,7 @@ router.get(
     try {
       const { businessId } = req.params;
 
-      if (typeof parseInt(businessId) !== "number") {
+      if (isNaN(parseInt(businessId))) {
         res.status(400).json({ message: "Invalid business id." });
         return;
       }
