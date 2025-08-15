@@ -14,31 +14,10 @@ export const BusinessCard = ({
   status: string;
   name: string;
   description: string;
-  services: number;
-  bookings: number;
-  revenue: number;
+  services: string;
+  bookings: string;
+  revenue: string;
 }) => {
-  
-  // Converts a number to USD
-  function convertToCurrency(numberToConvert: number) {
-    if (!numberToConvert) {
-      return "$0";
-    }
-    let convertedCurrency = "$";
-    const stringifiedNumber = numberToConvert.toString();
-    const n = stringifiedNumber.length;
-
-    for (let i = 0; i < n; i++) {
-      const j = n - i - 1;
-      convertedCurrency += stringifiedNumber[i];
-      if (j !== 0 && i !== n && j % 3 === 0) {
-        convertedCurrency += ",";
-      }
-    }
-
-    return convertedCurrency;
-  }
-
   return (
     <div className="flex flex-col col-span-1 p-5 bg-white border-2 border-neutral-200 rounded-md">
       <div className="flex justify-between items-start">
@@ -61,7 +40,7 @@ export const BusinessCard = ({
         </div>
         <div className="flex justify-between items-center w-full">
           <p className="text-neutral-600">Revenue</p>
-          <p>{convertToCurrency(revenue)}</p>
+          <p>{revenue}</p>
         </div>
       </div>
     </div>

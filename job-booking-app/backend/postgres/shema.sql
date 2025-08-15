@@ -17,7 +17,8 @@ CREATE TABLE
         description VARCHAR(75) NOT NULL,
         category VARCHAR(25) NOT NULL,
         phone_number VARCHAR(15) NOT NULL,
-        website_link VARCHAR(50)
+        website_link VARCHAR(50),
+        total_revenue MONEY DEFAULT 0
     );
 
 CREATE TABLE

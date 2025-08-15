@@ -39,8 +39,8 @@ router.get("/top", async (req: AuthenticatedRequest, res: express.Response) => {
       AVG(r.rating) AS avg_rating,
       COUNT(r.rating) AS total_reviews
       FROM businesses b
-      JOIN business_ratings br ON b.id = br.business_id
-      JOIN ratings r ON br.rating_id = r.id
+      INNER JOIN business_ratings br ON b.id = br.business_id
+      INNER JOIN ratings r ON br.rating_id = r.id
       GROUP BY b.id, b.name
       ORDER BY avg_rating
       LIMIT 10
@@ -59,31 +59,43 @@ router.get("/top", async (req: AuthenticatedRequest, res: express.Response) => {
   }
 });
 
-// Get a list of businesses for a user
+// Get basic information for all businesses a user owns
 router.get(
-  "/:businessId",
+  "/info",
   async (req: AuthenticatedRequest, res: express.Response) => {
     try {
       const userId = req.userId;
-      const { businessId } = req.params;
 
-      if (!businessId || typeof parseInt(businessId) !== "number") {
-        res.status(400).json({ message: "Business ID was not provided." });
+      const businessInfo = await pool.query(
+        `
+        SELECT
+        b.id,
+        b.name,
+        b.description,
+        b.total_revenue,
+        COUNT(s.id) AS service_count,
+        COUNT(bk.id) AS booking_count
+        FROM
+        businesses b
+        LEFT JOIN services s ON b.id = s.business_id
+        LEFT JOIN bookings bk ON b.id = bk.business_id
+        WHERE b.business_owner_id = $1
+        GROUP BY b.id, b.name
+        `,
+        [userId]
+      );
+
+      if (!businessInfo.rows[0]) {
+        res
+          .status(400)
+          .json({ message: "Could not find any businesses for this user." });
         return;
       }
 
-      const businessData = await pool.query(
-        `
-        SELECT name, location, description, category, phone_number, website_link
-        FROM businesses
-        WHERE id = $1 AND business_owner_id = $2
-        `,
-        [businessId, userId]
-      );
-
-      res.status(200).json(businessData.rows[0]);
+      res.status(200).json(businessInfo.rows);
     } catch (err) {
       console.error(err);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 );

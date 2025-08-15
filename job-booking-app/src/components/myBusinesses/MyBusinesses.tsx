@@ -1,8 +1,44 @@
 import { FaPaintBrush, FaPlus } from "react-icons/fa";
 import { BusinessCard } from "./BusinessCard";
 import Filter from "./Filter";
+import { useEffect, useState } from "react";
+
+interface Business {
+  id: number;
+  name: string;
+  description: string;
+  service_count: string;
+  booking_count: string;
+  total_revenue: string;
+}
 
 const MyBusinesses = () => {
+  const apiBase = import.meta.env.VITE_API_BASE;
+  const token = localStorage.getItem("token");
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+
+  useEffect(() => {
+    async function fetchBusinesses() {
+      try {
+        const response = await fetch(`${apiBase}/businesses/info`, {
+          method: "GET",
+          headers: {
+            Authorization: token || "",
+          },
+        });
+
+        if (response.ok) {
+          const apiData: Business[] = await response.json();
+          setBusinesses(apiData);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    fetchBusinesses();
+  }, [apiBase, token]);
+
   return (
     <div className="flex justify-center w-full min-h-[45rem] h-screen p-5 bg-neutral-100 overflow-y-auto">
       <div className="flex flex-col w-full h-full p-5 max-w-[60rem] rounded-md">
@@ -19,63 +55,21 @@ const MyBusinesses = () => {
           </button>
         </div>
         <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-7 w-full mt-7 pb-10">
-          <BusinessCard
-            icon={<FaPaintBrush fill="white"></FaPaintBrush>}
-            status="Active"
-            name="Creative Studio"
-            description="Logo design, branding, and creative services for small businesses"
-            services={5}
-            bookings={23}
-            revenue={4250}
-          ></BusinessCard>
-          <BusinessCard
-            icon={<FaPaintBrush fill="white"></FaPaintBrush>}
-            status="Active"
-            name="Creative Studio"
-            description="Logo design, branding, and creative services for small businesses"
-            services={5}
-            bookings={23}
-            revenue={4250}
-          ></BusinessCard>
-          <BusinessCard
-            icon={<FaPaintBrush fill="white"></FaPaintBrush>}
-            status="Active"
-            name="Creative Studio"
-            description="Logo design, branding, and creative services for small businesses"
-            services={5}
-            bookings={23}
-            revenue={4250}
-          ></BusinessCard>
-          <BusinessCard
-            icon={<FaPaintBrush fill="white"></FaPaintBrush>}
-            status="Active"
-            name="Creative Studio"
-            description="Logo design, branding, and creative services for small businesses"
-            services={5}
-            bookings={23}
-            revenue={4250}
-          ></BusinessCard>
-          <BusinessCard
-            icon={<FaPaintBrush fill="white"></FaPaintBrush>}
-            status="Active"
-            name="Creative Studio"
-            description="Logo design, branding, and creative services for small businesses"
-            services={5}
-            bookings={23}
-            revenue={4250}
-          ></BusinessCard>
-          <BusinessCard
-            icon={<FaPaintBrush fill="white"></FaPaintBrush>}
-            status="Active"
-            name="Creative Studio"
-            description="Logo design, branding, and creative services for small businesses"
-            services={5}
-            bookings={23}
-            revenue={4250}
-          ></BusinessCard>
+          {businesses.map((business, index) => (
+            <BusinessCard
+              key={index}
+              icon={<FaPaintBrush fill="white"></FaPaintBrush>}
+              status="Active"
+              name={business.name}
+              description={business.description}
+              services={business.service_count}
+              bookings={business.booking_count}
+              revenue={business.total_revenue}
+            ></BusinessCard>
+          ))}
         </div>
         <div className="w-full h-[0.15rem] my-5 bg-neutral-200"></div>
-        <div className="lg:block hidden">
+        <div className="lg:block hidden pb-5">
           <Filter></Filter>
         </div>
       </div>
