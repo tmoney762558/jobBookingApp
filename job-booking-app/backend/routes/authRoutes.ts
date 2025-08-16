@@ -96,6 +96,7 @@ router.post("/login", async (req: express.Request, res: express.Response) => {
 
     if (!foundMatch.rows[0]) {
       res.status(400).json({ message: "Incorrect username or password." });
+      return;
     }
 
     const hashedPassword = foundMatch.rows[0].hashed_password;
