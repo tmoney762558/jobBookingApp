@@ -59,6 +59,35 @@ router.get("/top", async (req: AuthenticatedRequest, res: express.Response) => {
   }
 });
 
+// Get information for a business (to fill out the editor)
+router.get(
+  "/fill/:businessId",
+  async (req: AuthenticatedRequest, res: express.Response) => {
+    try {
+      const userId = req.userId;
+      const { businessId } = req.params;
+
+      if (isNaN(parseInt(businessId))) {
+        res.status(400).json({message: "Invalid paramaters."});
+        return;
+      }
+
+      const businessInfo = await pool.query(
+        `
+        SELECT name, location, description, category, phone_number, website_link
+        FROM businesses
+        WHERE business_owner_id = $1 AND id = $2
+        `,
+        [userId, businessId]
+      );
+
+      res.status(200).json(businessInfo.rows[0]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+);
+
 // Get basic information for all businesses a user owns
 router.get(
   "/info",

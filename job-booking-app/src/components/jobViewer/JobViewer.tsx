@@ -26,16 +26,22 @@ interface BusinessBooking {
   business_name: string;
 }
 
-const JobViewer = () => {
+const JobViewer = ({ businessId }: { businessId: number }) => {
+  const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
   const [currentView, setCurrentView] = useState("Customer");
-  const [customerBookings, setCustomerBookings] = useState<CustomerBooking[]>([]);
-  const [businessBookings, setBusinessBookings] = useState<BusinessBooking[]>([]);
+  const [filter, setFilter] = useState("All"); // Set this up later
+  const [customerBookings, setCustomerBookings] = useState<CustomerBooking[]>(
+    []
+  );
+  const [businessBookings, setBusinessBookings] = useState<BusinessBooking[]>(
+    []
+  );
 
   useEffect(() => {
     async function fetchCustomerBookings() {
       try {
-        const response = await fetch("http://localhost:3001/bookings", {
+        const response = await fetch(`${apiBase}/bookings`, {
           method: "GET",
           headers: {
             Authorization: token || "",
@@ -52,11 +58,11 @@ const JobViewer = () => {
     }
 
     fetchCustomerBookings();
-  }, [token]);
+  }, [apiBase, token]);
 
   async function fetchBusinessBookings() {
     try {
-      const response = await fetch("http://localhost:3001/bookings/2", {
+      const response = await fetch(`${apiBase}/bookings/${businessId}`, {
         method: "GET",
         headers: {
           Authorization: token || "",
@@ -76,7 +82,7 @@ const JobViewer = () => {
     <div>
       <div>
         <Navbar></Navbar>
-        <div className="flex w-full justify-center items-center px-4">
+        <div className="flex w-full justify-center items-center px-4 pb-4">
           <div className="flex flex-col w-full max-w-[75rem]">
             <div className="flex lg:flex-row flex-col justify-between items-center w-full mt-7">
               <h1 className="font-semibold">Job Management</h1>
@@ -117,6 +123,7 @@ const JobViewer = () => {
                   width="w-[7rem]"
                   placeholder="Active"
                   options={["Active", "Completed", "Cancelled"]}
+                  setterFunction={setFilter}
                 ></DropdownMenu>
               </div>
               <div className="flex flex-col gap-5 h-[50vh] min-h-[30rem] mt-5 overflow-y-auto">

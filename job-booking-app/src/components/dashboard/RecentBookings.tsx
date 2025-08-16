@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import genericUser1 from "../../assets/genericUser1.svg";
 
-interface RecentBooking {
+interface Booking {
+  id: number;
+  customer_name: string;
+  service_name: string;
   created_at: string;
-  current_offer: string;
   location: string;
-  name: string;
+  current_offer: string;
   status: string;
-  username: string;
 }
 
 const RecentBookings = ({ businessId }: { businessId: number }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
-  const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([]);
+  const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     async function fetchRecentBookings() {
@@ -26,7 +27,7 @@ const RecentBookings = ({ businessId }: { businessId: number }) => {
         });
 
         if (response.ok) {
-          const apiData: RecentBooking[] = await response.json();
+          const apiData: Booking[] = await response.json();
           setRecentBookings(apiData);
         }
       } catch (err) {
@@ -54,9 +55,9 @@ const RecentBookings = ({ businessId }: { businessId: number }) => {
             <div className="flex md:flex-row flex-col lg:items-center items-start gap-3 w-full">
               <img className="lg:block hidden w-10" src={genericUser1}></img>
               <div>
-                <p>{booking.name}</p>
+                <p>{booking.service_name}</p>
                 <p className="text-neutral-500">
-                  {booking.username} * {booking.created_at}
+                  {booking.customer_name} * {booking.created_at}
                 </p>
               </div>
             </div>

@@ -27,9 +27,11 @@ interface Service {
 
 const BusinessEditor = ({
   operation,
+  setOperation,
   businessId,
 }: {
   operation: string;
+  setOperation: React.Dispatch<React.SetStateAction<string>>;
   businessId?: number;
 }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
@@ -134,15 +136,19 @@ const BusinessEditor = ({
   }
 
   useEffect(() => {
+    // Add a flag here to prevent refetching when freshly creating a business
     if (operation === "Edit") {
       async function fetchBusinessInfo() {
         try {
-          const response = await fetch(`${apiBase}/businesses/${businessId}`, {
-            method: "GET",
-            headers: {
-              Authorization: token || "",
-            },
-          });
+          const response = await fetch(
+            `${apiBase}/businesses/fill/${businessId}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: token || "",
+              },
+            }
+          );
 
           if (response.ok) {
             // TODO: Add typing for the apiData
@@ -274,6 +280,7 @@ const BusinessEditor = ({
               onClick={() => {
                 if (operation === "Create") {
                   createBusiness();
+                  setOperation("Edit");
                 } else {
                   editBusiness();
                 }

@@ -32,11 +32,6 @@ router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
       [userId]
     );
 
-    if (!bookings.rows[0]) {
-      res.status(400).json({ message: "No bookings found" });
-      return;
-    }
-
     res.status(200).json(bookings.rows);
   } catch (err) {
     console.log(err);
@@ -44,19 +39,20 @@ router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
   }
 });
 
-// Get all bookings for a business
+// Get a page of bookings for a business
 router.get(
   "/:businessId",
   async (req: AuthenticatedRequest, res: express.Response) => {
     try {
       const userId = req.userId;
       const { businessId } = req.params;
+      const {limit, offset} = req.query;
 
       if (isNaN(parseInt(businessId)) || !businessId) {
         res.status(400).json({ message: "Business ID not provided." });
         return;
       }
-
+      
       const bookings = await pool.query(
         `
         SELECT 
@@ -73,14 +69,12 @@ router.get(
         WHERE bookings.business_id = $2
         AND EXISTS (SELECT 1 FROM businesses WHERE businesses.id = bookings.business_id AND businesses.business_owner_id = $1)
         ORDER BY bookings.created_at
-        `,
-        [userId, businessId]
-      );
+        LIMIT $3
+        OFFSET $4
 
-      if (!bookings.rows[0]) {
-        res.status(400).json({ message: "No bookings found" });
-        return;
-      }
+        `,
+        [userId, businessId, limit, offset]
+      );
 
       res.status(200).json(bookings.rows);
     } catch (err) {
@@ -110,11 +104,6 @@ router.get(
         `,
         [userId, parseInt(businessId)]
       );
-
-      if (!bookings.rows[0]) {
-        res.status(400).json({ message: "No bookings found" });
-        return;
-      }
 
       res.status(200).json(bookings.rows);
     } catch (err) {

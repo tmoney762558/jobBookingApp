@@ -86,13 +86,6 @@ router.get(
         [parseInt(businessId)]
       );
 
-      if (!businessServices.rows[0]) {
-        res
-          .status(400)
-          .json({ message: "No services could be found for this business." });
-        return;
-      }
-
       res.status(200).json(businessServices.rows);
     } catch (err) {
       console.error(err);
