@@ -114,13 +114,6 @@ router.get(
         [userId]
       );
 
-      if (!businessInfo.rows[0]) {
-        res
-          .status(400)
-          .json({ message: "Could not find any businesses for this user." });
-        return;
-      }
-
       res.status(200).json(businessInfo.rows);
     } catch (err) {
       console.error(err);
