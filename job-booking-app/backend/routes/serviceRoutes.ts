@@ -119,7 +119,12 @@ router.post(
         return;
       }
 
-      if (!price || isNaN(parseInt(price.slice(1)))) {
+      /* Checks that the price being provided is a valid number when removing the first
+         character. This would ideally be a dollar sign or a number in the case of a one 
+         digit price. Secondly, make sure that the first digit isn't a number and 
+         therefore valid.
+      */
+      if (!price || (isNaN(parseInt(price.slice(1))) && isNaN(price[0]))) {
         res
           .status(400)
           .json({ message: "Invalid price format. Please type value in USD." });

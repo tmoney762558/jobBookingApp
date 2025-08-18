@@ -163,15 +163,16 @@ router.post("/", async (req: AuthenticatedRequest, res: express.Response) => {
       });
     }
 
-    await pool.query(
+    const newBusiness = await pool.query(
       `
         INSERT INTO businesses (business_owner_id, name, location, description, category, phone_number, website_link)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id
     `,
       [userId, name, location, description, category, phoneNumber, websiteLink]
     );
 
-    res.status(200).json({ message: "Sucessfully created business." });
+    res.status(200).json({ message: "Sucessfully created business.", businessId: newBusiness.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error" });

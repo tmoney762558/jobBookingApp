@@ -82,7 +82,7 @@ const BusinessEditor = ({
 
   async function editBusiness() {
     try {
-      const response = await fetch(`${apiBase}/businesses`, {
+      const response = await fetch(`${apiBase}/businesses/${businessId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +152,13 @@ const BusinessEditor = ({
 
           if (response.ok) {
             // TODO: Add typing for the apiData
-            const apiData = await response.json();
+            const apiData: BusinessData = await response.json();
+            setBusinessNameInput(apiData.name);
+            setBusinessLocationInput(apiData.location);
+            setBusinessDescriptionInput(apiData.description);
+            setBusinessCategoryInput(apiData.category);
+            setPhoneNumberInput(apiData.phone_number);
+            setWebsiteLinkInput(apiData.website_link);
             setBusinessData(apiData);
           }
         } catch (err) {
@@ -231,10 +237,10 @@ const BusinessEditor = ({
             fetchServices={fetchServices}
           ></Service>
         ))}
-        <NewService
+        {operation === "Edit" ? (<NewService
           businessId={businessId}
           fetchServices={fetchServices}
-        ></NewService>
+        ></NewService>) : null}
         <div className="w-full h-[1px] mt-7 bg-neutral-200"></div>
         <h2 className="mt-7 text-xl font-bold">Contact Information</h2>
         <div className="flex gap-2 items-center w-full mt-5">

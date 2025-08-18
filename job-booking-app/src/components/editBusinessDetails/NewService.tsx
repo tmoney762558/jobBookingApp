@@ -53,6 +53,7 @@ const NewService = ({
         const apiData: CreateServiceResponse = await response.json();
         // Placeholder alert
         alert(apiData.message);
+        // Clear all inputs
         nameInput.current.value = "";
         priceInput.current.value = "";
         descriptionInput.current.value = "";
