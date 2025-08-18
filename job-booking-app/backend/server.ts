@@ -11,7 +11,7 @@ import bookingRoutes from "./routes/bookingRoutes.ts";
 const app = express();
 const server = createServer(app);
 
-const PORT = 3000;
+const PORT = 3002;
 
 // CORS Configuration
 const corsOptions = {
