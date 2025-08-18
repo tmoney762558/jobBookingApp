@@ -41,8 +41,8 @@ router.get(
 
       const searchQuery = await pool.query(
         `
-            SELECT services.name AS service_name, services.price, services.description, services.duration, services.category,
-            businesses.name AS business_name, businesses.location
+            SELECT services.id AS service_id,services.name AS service_name, services.price, services.description, services.duration, services.category,
+            businesses.id AS business_id, businesses.name AS business_name, businesses.location
             FROM services
             LEFT JOIN businesses ON businesses.id = services.business_id
             WHERE services.name ILIKE $1

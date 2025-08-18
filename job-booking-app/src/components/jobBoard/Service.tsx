@@ -3,6 +3,8 @@ import { FaDollarSign } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
 
 const Service = ({
+  business_id,
+  service_id,
   service_name,
   price,
   description,
@@ -10,6 +12,8 @@ const Service = ({
   business_name,
   location,
 }: {
+  business_id: number;
+  service_id: number;
   service_name: string;
   price: string;
   description: string;
@@ -17,6 +21,33 @@ const Service = ({
   business_name: string;
   location: string;
 }) => {
+  const apiBase = import.meta.env.VITE_API_BASE;
+  const token = localStorage.getItem("token");
+
+  async function createBooking() {
+    try {
+      const response = await fetch(`${apiBase}/bookings/${business_id}/${service_id}`, {
+        method: "POST",
+        headers: {
+          Authorization: token || "",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          location: location,
+          description: description,
+          currentOffer: Number(price.replace(/[^0-9.-]+/g,"")),
+        })
+      });
+
+      if (response.ok) {
+        const apiData = await response.json();
+        alert(apiData.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <div className="w-full p-5 border-2 border-neutral-200 rounded-md">
       <h2>{service_name}</h2>
@@ -47,7 +78,7 @@ const Service = ({
         </div>
         */}
         <div className="flex justify-end items-center w-full gap-2">
-          <button className="py-1 px-4 bg-black rounded-sm text-white font-semibold">
+          <button className="py-1 px-4 bg-black rounded-sm text-white font-semibold" onClick={createBooking}>
             Book Now
           </button>
         </div>

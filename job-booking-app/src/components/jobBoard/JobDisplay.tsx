@@ -3,6 +3,8 @@ import FilterSm from "./FilterSm";
 import Service from "./Service";
 
 interface Service {
+  business_id: string;
+  service_id: string;
   service_name: string;
   price: string;
   description: string;
@@ -44,6 +46,8 @@ const JobDisplay = ({
         {services.map((service, index) => (
           <Service
             key={index}
+            business_id={parseInt(service.business_id)}
+            service_id={parseInt(service.service_id)}
             service_name={service.service_name}
             price={service.price}
             description={service.description}

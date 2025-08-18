@@ -4,6 +4,8 @@ import JobDisplay from "./JobDisplay";
 import TopNav from "./TopNav";
 
 interface Service {
+  business_id: string;
+  service_id: string;
   service_name: string;
   price: string;
   description: string;

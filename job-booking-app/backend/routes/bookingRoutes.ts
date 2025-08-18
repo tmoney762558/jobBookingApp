@@ -118,6 +118,7 @@ router.post(
   "/:businessId/:serviceId",
   async (req: AuthenticatedRequest, res: express.Response) => {
     try {
+      console.log(req.body)
       const userId = req.userId;
       const { businessId, serviceId } = req.params;
       const { location, description, currentOffer } = req.body;
