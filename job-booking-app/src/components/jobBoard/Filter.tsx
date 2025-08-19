@@ -83,22 +83,6 @@ const Filter = ({
           </li>
         </ul>
         <div className="w-full h-[1px] my-3 bg-neutral-200"></div>
-        <p className="font-semibold">Experience Level</p>
-        <ul className="flex flex-col gap-2 mt-2 text-sm">
-          <li className="flex items-center gap-2">
-            <input type="checkbox"></input>
-            <label>Entry level</label>
-          </li>
-          <li className="flex items-center gap-2">
-            <input type="checkbox"></input>
-            <label>Mid level</label>
-          </li>
-          <li className="flex items-center gap-2">
-            <input type="checkbox"></input>
-            <label>Senior level</label>
-          </li>
-        </ul>
-        <div className="w-full h-[1px] my-3 bg-neutral-200"></div>
         <p className="font-semibold">Cost</p>
         <div className="flex justify-between items-center w-full mt-2">
           <input

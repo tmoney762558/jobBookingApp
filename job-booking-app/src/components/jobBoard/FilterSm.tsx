@@ -22,7 +22,7 @@ const FilterSm = ({
       </div>
       {filterOpen ? (
         <div className="lg:hidden flex justify-center items-center fixed inset-0 w-screen h-screen px-5 bg-[rgba(0, 0, 0, 0.10)] backdrop-blur-sm z-10 cursor-auto">
-          <nav className="absolute w-[20rem] max-h-[90vh] p-5 bg-white border-2 border-neutral-200 overflow-y-auto">
+          <nav className="absolute w-[18rem] max-h-[90vh] p-5 bg-white border-2 border-neutral-200 overflow-y-auto">
             <div className="flex justify-between items-center">
               <p className="font-semibold">Filters</p>
               <button className="text-sm text-neutral-500 rounded-md cursor-pointer">
@@ -91,22 +91,6 @@ const FilterSm = ({
                   }}
                 ></input>
                 <label>Freelance</label>
-              </li>
-            </ul>
-            <div className="w-full h-[1px] my-3 bg-neutral-200"></div>
-            <p className="font-semibold">Experience Level</p>
-            <ul className="flex flex-col gap-2 mt-2 text-sm">
-              <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
-                <label>Entry level</label>
-              </li>
-              <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
-                <label>Mid level</label>
-              </li>
-              <li className="flex items-center gap-2">
-                <input type="checkbox"></input>
-                <label>Senior level</label>
               </li>
             </ul>
             <div className="w-full h-[1px] my-3 bg-neutral-200"></div>
