@@ -10,7 +10,7 @@ const TopNav = ({
   fetchMatchingServices: () => Promise<void>;
 }) => {
   return (
-    <nav className="flex justify-between items-center gap-3 w-full py-2">
+    <nav className="flex justify-between items-center gap-3 w-full py-2 px-1">
       <div className="flex items-center gap-3 w-full">
         <div className="lg:flex hidden flex-1 justify-start items-center gap-2">
           <div className="p-2 bg-black rounded-md">
@@ -27,7 +27,7 @@ const TopNav = ({
         >
           <FaSearch className="absolute left-2" fontSize={"0.75rem"}></FaSearch>
           <input
-            className="w-full max-w-[20rem] py-1 pl-7 bg-neutral-200 rounded-md text-sm"
+            className="w-full max-w-[17rem] py-1 pl-7 bg-neutral-200 rounded-md text-sm"
             placeholder="Search for Services"
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -35,7 +35,7 @@ const TopNav = ({
           ></input>
         </form>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex shrink-0 items-center gap-3">
         <CiBellOn className="shrink-0 text-[1.7rem]"></CiBellOn>
         <img className="w-7 bg-black rounded-full" src={genericUser1}></img>
       </div>

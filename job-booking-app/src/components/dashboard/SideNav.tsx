@@ -5,9 +5,11 @@ import { PiChartLineUp } from "react-icons/pi";
 const SideNav = ({
   selected,
   setSelected,
+  isBusinessOwner,
 }: {
   selected: string;
   setSelected: React.Dispatch<React.SetStateAction<string>>;
+  isBusinessOwner: boolean;
 }) => {
   return (
     <nav className="lg:flex hidden flex-col items-center gap-3 lg:w-[15rem] md:w-[10rem] w-fit h-full pt-5 lg:px-5 px-1 border-r-[1px] border-neutral-300">
@@ -29,7 +31,7 @@ const SideNav = ({
         <FaCalendar fontSize={"1.3rem"}></FaCalendar>
         <p className="md:block hidden text-sm">Bookings</p>
       </div>
-      <div
+      {isBusinessOwner ? <div
         className={`flex items-center gap-3 w-full py-1 lg:px-3 px-2 ${
           selected === "Clients" ? "bg-neutral-200" : "bg-white"
         } hover:bg-neutral-200 rounded-sm cursor-pointer`}
@@ -37,7 +39,7 @@ const SideNav = ({
       >
         <FaPeopleGroup fontSize={"1.3rem"}></FaPeopleGroup>
         <p className="md:block hidden text-sm">Clients</p>
-      </div>
+      </div> : null}
       <div
         className={`flex items-center gap-3 w-full py-1 lg:px-3 px-2 ${
           selected === "Payments" ? "bg-neutral-200" : "bg-white"

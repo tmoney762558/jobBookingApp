@@ -7,6 +7,8 @@ import JobViewer from "./components/jobViewer/JobViewer";
 import MyBusinesses from "./components/myBusinesses/MyBusinesses";
 
 const App = () => {
+  // All placeholder alerts will be replaced with a custom error/success message component in the future
+  // Optimize API calls by deleting data from the frontend instead of refetching
   const [businessOperation, setBusinessOperation] = useState("Edit");
   return (
     <div>
@@ -15,7 +17,7 @@ const App = () => {
       <MyBusinesses></MyBusinesses>
       <Dashboard businessId={1}></Dashboard>
       <JobBoard></JobBoard>
-      <JobViewer businessId={1}></JobViewer>
+      <JobViewer businessId={0}></JobViewer>
     </div>
   );
 };

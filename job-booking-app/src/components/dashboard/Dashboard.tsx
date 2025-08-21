@@ -4,14 +4,18 @@ import SideNav from "./SideNav";
 import QuickStats from "./QuickStats";
 import { useState } from "react";
 
-const Dashboard = ({ businessId }: { businessId: number }) => {
+const Dashboard = ({
+  businessId,
+}: {
+  businessId: number;
+}) => {
   const [selected, setSelected] = useState<string>("Dashboard");
 
   return (
     <div className="flex flex-col w-full min-h-[40rem] h-screen">
       <Navbar></Navbar>
       <div className="flex w-full h-full">
-        <SideNav selected={selected} setSelected={setSelected}></SideNav>
+        <SideNav selected={selected} setSelected={setSelected} isBusinessOwner={businessId ? true : false}></SideNav>
         <div className="flex w-full justify-center lg:p-5 p-3">
           <div className="flex flex-col w-full max-w-[75rem] pb-[1rem]">
             <div className="flex justify-between w-full">

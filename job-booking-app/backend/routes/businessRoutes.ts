@@ -68,7 +68,7 @@ router.get(
       const { businessId } = req.params;
 
       if (isNaN(parseInt(businessId))) {
-        res.status(400).json({message: "Invalid paramaters."});
+        res.status(400).json({ message: "Invalid paramaters." });
         return;
       }
 
@@ -102,8 +102,8 @@ router.get(
         b.name,
         b.description,
         b.total_revenue,
-        COUNT(s.id) AS service_count,
-        COUNT(bk.id) AS booking_count
+        COUNT(DISTINCT s.id) AS service_count,
+        COUNT(DISTINCT bk.id) AS booking_count
         FROM
         businesses b
         LEFT JOIN services s ON b.id = s.business_id
@@ -172,7 +172,12 @@ router.post("/", async (req: AuthenticatedRequest, res: express.Response) => {
       [userId, name, location, description, category, phoneNumber, websiteLink]
     );
 
-    res.status(200).json({ message: "Sucessfully created business.", businessId: newBusiness.rows[0] });
+    res
+      .status(200)
+      .json({
+        message: "Sucessfully created business.",
+        businessId: newBusiness.rows[0],
+      });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error" });

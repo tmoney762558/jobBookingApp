@@ -16,6 +16,7 @@ router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
       `
       SELECT 
       services.name AS service_name,
+      bookings.id,
       bookings.status,
       bookings.description,
       bookings.created_at,
@@ -46,18 +47,19 @@ router.get(
     try {
       const userId = req.userId;
       const { businessId } = req.params;
-      const {limit, offset} = req.query;
+      const { limit, offset } = req.query;
 
       if (isNaN(parseInt(businessId)) || !businessId) {
         res.status(400).json({ message: "Business ID not provided." });
         return;
       }
-      
+
       const bookings = await pool.query(
         `
         SELECT 
         users.username AS customer_name, 
-        services.name AS service_name, 
+        services.name AS service_name,
+        bookings.id,
         bookings.created_at, 
         bookings.location, 
         bookings.current_offer, 
@@ -118,7 +120,7 @@ router.post(
   "/:businessId/:serviceId",
   async (req: AuthenticatedRequest, res: express.Response) => {
     try {
-      console.log(req.body)
+      console.log(req.body);
       const userId = req.userId;
       const { businessId, serviceId } = req.params;
       const { location, description, currentOffer } = req.body;
@@ -176,6 +178,10 @@ router.put(
       const { bookingId } = req.params;
       const { updatedOffer } = req.body;
 
+      if (!bookingId || isNaN(parseInt(bookingId))) {
+        res.status(400).json({ message: "Booking id not provided." });
+      }
+
       if (typeof updatedOffer !== "string" || !updatedOffer) {
         res.status(400).json({ message: "Updated offer not provided." });
       }
@@ -203,6 +209,36 @@ router.put(
   }
 );
 
+// Accept a booking as a business owner
+router.put(
+  "/accept/:bookingId",
+  async (req: AuthenticatedRequest, res: express.Response) => {
+    try {
+      const userId = req.userId;
+      const { bookingId } = req.params;
+
+      if (!bookingId || isNaN(parseInt(bookingId))) {
+        res.status(400).json({ message: "Business id not provided." });
+        return;
+      }
+
+      await pool.query(
+        `
+      UPDATE bookings bk
+      SET status = 'Accepted'
+      WHERE id = $1 AND EXISTS (SELECT 1 FROM businesses WHERE id = bk.business_id AND business_owner_id = $2)
+      `,
+        [bookingId, userId]
+      );
+
+      res.status(200).json({ message: "Successfully accepted the booking." });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
 // Cancel a booking as a customer
 router.delete(
   "/:bookingId",
@@ -210,11 +246,13 @@ router.delete(
     try {
       const userId = req.userId;
       const { bookingId } = req.params;
+      console.log(bookingId);
 
       const updatedBooking = await pool.query(
         `
             DELETE FROM bookings b
             WHERE id = $1 AND customer_id = $2
+            RETURNING id
         `,
         [bookingId, userId]
       );

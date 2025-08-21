@@ -2,16 +2,8 @@ import { FaCalendar, FaPhone, FaWrench } from "react-icons/fa";
 import { FaLocationDot, FaXmark } from "react-icons/fa6";
 import genericUser1 from "../../assets/genericUser1.svg";
 
-const JobBox = ({
-  service_name,
-  status,
-  description,
-  created_at,
-  location,
-  current_offer,
-  business_name,
-  phone_number,
-}: {
+interface CustomerBooking {
+  id: string;
   service_name: string;
   status: string;
   description: string;
@@ -20,7 +12,59 @@ const JobBox = ({
   current_offer: string;
   business_name: string;
   phone_number: string;
+}
+
+const JobBox = ({
+  bookingId,
+  service_name,
+  status,
+  description,
+  created_at,
+  location,
+  current_offer,
+  business_name,
+  phone_number,
+  customerBookings,
+  setCustomerBookings,
+}: {
+  bookingId: string;
+  service_name: string;
+  status: string;
+  description: string;
+  created_at: string;
+  location: string;
+  current_offer: string;
+  business_name: string;
+  phone_number: string;
+  customerBookings: CustomerBooking[];
+  setCustomerBookings: React.Dispatch<React.SetStateAction<CustomerBooking[]>>;
 }) => {
+  const apiBase = import.meta.env.VITE_API_BASE;
+  const token = localStorage.getItem("token");
+
+  async function cancelBooking() {
+    try {
+      const response = await fetch(`${apiBase}/bookings/${bookingId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token || "",
+        },
+      });
+
+      if (response.ok) {
+        const apiData = await response.json();
+        // Remove customer booking from frontend
+        setCustomerBookings(
+          customerBookings.filter((booking) => booking.id !== bookingId)
+        );
+        // Placeholder alert
+        alert(apiData.message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <div className="w-full p-3 border-2 border-neutral-200 rounded-md">
       <div className="flex lg:flex-row flex-col justify-between items-start w-full text-sm">
@@ -54,13 +98,16 @@ const JobBox = ({
           <p className="font-semibold">Cost: {current_offer}</p>
         </div>
       </div>
-      <div className="flex lg:flex-row flex-col justify-between lg:items-center items-start w-full lg:mt-10 mt-3">
+      <div className="flex justify-between lg:items-center items-start w-full lg:mt-10 mt-3">
         <div className="flex items-center gap-2">
           <img className="w-7 bg-black rounded-full" src={genericUser1}></img>
           <p className="text-sm">{business_name}</p>
         </div>
         <div className="flex items-center gap-2 lg:mt-0 mt-2 text-sm">
-          <button className="h-7 px-4 border-2 border-neutral-200 font-semibold cursor-pointer">
+          <button
+            className="h-7 px-4 border-2 border-neutral-200 font-semibold cursor-pointer"
+            onClick={cancelBooking}
+          >
             <FaXmark className="fill-red-500 text-xl"></FaXmark>
           </button>
         </div>
