@@ -303,9 +303,9 @@ const BusinessEditor = ({
               type="button"
               onClick={() => {
                 if (currentBusinessId) {
-                  createBusiness();
-                } else {
                   editBusiness();
+                } else {
+                  createBusiness();
                 }
               }}
             >
