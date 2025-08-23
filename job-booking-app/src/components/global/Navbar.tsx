@@ -7,7 +7,7 @@ import { CgClose } from "react-icons/cg";
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   return (
-    <nav className="flex lg:justify-between items-center py-3 px-4 text-sm border-b-[1px] border-neutral-300">
+    <nav className="flex lg:justify-between items-center w-full py-3 px-4 text-sm border-b-[1px] border-neutral-300">
       <div className="flex flex-1 justify-start items-center gap-2">
         <div className="cursor-pointer">
           <div className="p-2 bg-black rounded-md">

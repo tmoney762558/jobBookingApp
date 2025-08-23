@@ -7,7 +7,7 @@ interface AuthenticatedRequest extends express.Request {
 
 const router = express.Router();
 
-// Get all bookings for a customer
+// Get all bookings for a customer (Add pagination later)
 router.get("/", async (req: AuthenticatedRequest, res: express.Response) => {
   try {
     const userId = req.userId;
@@ -86,9 +86,36 @@ router.get(
   }
 );
 
+// Get top 5 bookings for a customer
+router.get(
+  "/recent/customer",
+  async (req: AuthenticatedRequest, res: express.Response) => {
+    try {
+      const userId = req.userId;
+
+      const bookings = await pool.query(
+        `
+        SELECT users.username, services.name, bookings.created_at, bookings.location, bookings.current_offer, bookings.status FROM bookings
+        LEFT JOIN users ON users.id = bookings.customer_id
+        LEFT JOIN services ON services.id = bookings.service_id
+        WHERE users.id = $1
+        ORDER BY bookings.created_at
+        LIMIT 5
+        `,
+        [userId]
+      );
+
+      res.status(200).json(bookings.rows);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
 // Get top 5 bookings for a business
 router.get(
-  "/:businessId/top",
+  "/recent/business/:businessId",
   async (req: AuthenticatedRequest, res: express.Response) => {
     try {
       const userId = req.userId;

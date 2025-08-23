@@ -3,6 +3,7 @@ import DropdownMenu from "../global/DropdownMenu";
 import Navbar from "../global/Navbar";
 import CustomerBookingComponent from "./CustomerBooking";
 import BusinessBookingComponent from "./BusinessBooking";
+import SideNav from "../dashboard/SideNav";
 
 interface CustomerBooking {
   id: string;
@@ -85,62 +86,63 @@ const JobViewer = ({ businessId }: { businessId: number }) => {
   }, [apiBase, token, businessId]);
 
   return (
-    <div>
-      <div>
-        <Navbar></Navbar>
-        <div className="flex w-full justify-center items-center px-4 pb-4">
-          <div className="flex flex-col w-full max-w-[75rem]">
-            <div className="flex lg:flex-row flex-col justify-between items-center w-full mt-7">
-              <h1 className="font-semibold">Job Management</h1>
+    <div className="flex flex-col w-full min-h-[40rem] h-screen">
+      <Navbar></Navbar>
+      <div className="flex w-full h-full">
+        <SideNav isBusinessOwner={businessId ? true : false}></SideNav>
+        <div className="flex w-full justify-center lg:p-5 p-3">
+          <div className="flex flex-col w-full max-w-[75rem] pb-[1rem]">
+          <div className="flex lg:flex-row flex-col justify-between items-center w-full">
+            <h1 className="text-2xl font-bold">Booking Management</h1>
+          </div>
+          <div className="w-full mt-7 p-5 border-2 border-neutral-200 overflow-y-auto">
+            <div className="flex justify-between items-center w-full">
+              <h2 className="font-semibold">
+                {businessId ? "Requested Jobs" : "Incoming Jobs"}
+              </h2>
+              <DropdownMenu
+                width="w-[7rem]"
+                placeholder="Active"
+                options={["Active", "Completed", "Cancelled"]}
+                setterFunction={setFilter}
+              ></DropdownMenu>
             </div>
-            <div className="w-full mt-7 p-5 border-2 border-neutral-200 overflow-y-auto">
-              <div className="flex justify-between items-center w-full">
-                <h2 className="font-semibold">
-                  {businessId ? "Requested Jobs" : "Incoming Jobs"}
-                </h2>
-                <DropdownMenu
-                  width="w-[7rem]"
-                  placeholder="Active"
-                  options={["Active", "Completed", "Cancelled"]}
-                  setterFunction={setFilter}
-                ></DropdownMenu>
-              </div>
-              <div className="flex flex-col gap-5 h-[50vh] min-h-[30rem] mt-5 overflow-y-auto">
-                {businessId
-                  ? businessBookings.map((booking, index) => (
-                      <BusinessBookingComponent
-                        bookingId={booking.id}
-                        customer_name={booking.customer_name}
-                        service_name={booking.service_name}
-                        status={booking.status}
-                        description={booking.description}
-                        created_at={booking.created_at}
-                        location={booking.location}
-                        current_offer={booking.current_offer}
-                        businessBookings={businessBookings}
-                        setBusinessBookings={setBusinessBookings}
-                        key={index}
-                      ></BusinessBookingComponent>
-                    ))
-                  : customerBookings.map((booking, index) => (
-                      <CustomerBookingComponent
-                        bookingId={booking.id}
-                        service_name={booking.service_name}
-                        status={booking.status}
-                        description={booking.description}
-                        created_at={booking.created_at}
-                        location={booking.location}
-                        current_offer={booking.current_offer}
-                        business_name={booking.business_name}
-                        phone_number={booking.phone_number}
-                        customerBookings={customerBookings}
-                        setCustomerBookings={setCustomerBookings}
-                        key={index}
-                      ></CustomerBookingComponent>
-                    ))}
-              </div>
+            <div className="flex flex-col gap-5 h-[50vh] min-h-[30rem] mt-5 overflow-y-auto">
+              {businessId
+                ? businessBookings.map((booking, index) => (
+                    <BusinessBookingComponent
+                      bookingId={booking.id}
+                      customer_name={booking.customer_name}
+                      service_name={booking.service_name}
+                      status={booking.status}
+                      description={booking.description}
+                      created_at={booking.created_at}
+                      location={booking.location}
+                      current_offer={booking.current_offer}
+                      businessBookings={businessBookings}
+                      setBusinessBookings={setBusinessBookings}
+                      key={index}
+                    ></BusinessBookingComponent>
+                  ))
+                : customerBookings.map((booking, index) => (
+                    <CustomerBookingComponent
+                      bookingId={booking.id}
+                      service_name={booking.service_name}
+                      status={booking.status}
+                      description={booking.description}
+                      created_at={booking.created_at}
+                      location={booking.location}
+                      current_offer={booking.current_offer}
+                      business_name={booking.business_name}
+                      phone_number={booking.phone_number}
+                      customerBookings={customerBookings}
+                      setCustomerBookings={setCustomerBookings}
+                      key={index}
+                    ></CustomerBookingComponent>
+                  ))}
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

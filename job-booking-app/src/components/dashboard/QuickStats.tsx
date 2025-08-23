@@ -5,7 +5,7 @@ import { PiChartLineUp } from "react-icons/pi";
 const QuickStats = () => {
   return (
     <div className="flex gap-5 mt-10 overflow-x-auto">
-      <div className="flex flex-1 flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
+      <div className="flex h-[10rem] flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
             <p className="text-neutral-600">Total Jobs</p>
@@ -19,7 +19,7 @@ const QuickStats = () => {
           <p className="text-neutral-600">+12% from last month</p>
         </div>
       </div>
-      <div className="flex flex-1 flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
+      <div className="flex h-[10rem] flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
             <p className="text-neutral-600">Active Bookings</p>
@@ -33,7 +33,7 @@ const QuickStats = () => {
           <p className="text-neutral-600">+3 from yesterday</p>
         </div>
       </div>
-      <div className="flex flex-1 flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
+      <div className="flex h-[10rem] flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
             <p className="text-neutral-600">Revenue</p>
@@ -47,7 +47,7 @@ const QuickStats = () => {
           <p className="text-neutral-600">+8% from last month</p>
         </div>
       </div>
-      <div className="flex flex-1 flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
+      <div className="flex h-[10rem] flex-col aspect-video p-5 border-2 border-neutral-200 rounded-md">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">
             <p className="text-neutral-600">Completion Rate</p>

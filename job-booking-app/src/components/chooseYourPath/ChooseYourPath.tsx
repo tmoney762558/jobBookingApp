@@ -1,8 +1,10 @@
 import Navbar from "./Navbar";
 import defaultAvatar from "../../assets/defaultAvatar.png";
 import { FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const ChooseYourPath = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col min-h-[45rem] h-screen overflow-y-auto">
       <div className="flex shrink-0 flex-col h-1/2 justify-center">
@@ -46,7 +48,9 @@ const ChooseYourPath = () => {
                 <p className="text-neutral-600">Get support</p>
               </li>
             </ul>
-            <button className="w-full mt-10 py-2 bg-black rounded-md text-sm text-white font-bold cursor-pointer">
+            <button className="w-full mt-10 py-2 bg-black rounded-md text-sm text-white font-bold cursor-pointer" onClick={() => {
+              navigate("/dashboard");
+            }}>
               Continue as Customer
             </button>
           </div>
@@ -77,7 +81,9 @@ const ChooseYourPath = () => {
                 <p className="text-neutral-600">Payment processing</p>
               </li>
             </ul>
-            <button className="w-full mt-10 py-2 bg-black rounded-md text-sm text-white font-bold cursor-pointer">
+            <button className="w-full mt-10 py-2 bg-black rounded-md text-sm text-white font-bold cursor-pointer" onClick={() => {
+              navigate("/myBusinesses")
+            }}>
               Continue as Business
             </button>
           </div>

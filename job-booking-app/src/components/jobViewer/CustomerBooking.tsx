@@ -95,10 +95,10 @@ const JobBox = ({
           <p className="lg:block hidden px-3 bg-neutral-100 border-2 border-neutral-200 rounded-sm">
             {status}
           </p>
-          <p className="font-semibold">Cost: {current_offer}</p>
+          <p className="font-semibold">Price: {current_offer}</p>
         </div>
       </div>
-      <div className="flex justify-between lg:items-center items-start w-full lg:mt-10 mt-3">
+      <div className="flex justify-between items-center w-full lg:mt-10 mt-3">
         <div className="flex items-center gap-2">
           <img className="w-7 bg-black rounded-full" src={genericUser1}></img>
           <p className="text-sm">{business_name}</p>

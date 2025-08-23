@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BsGoogle, BsMicrosoft } from "react-icons/bs";
 import { FaBriefcase } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface TokenResponse extends Response {
   token: string;
@@ -13,6 +14,7 @@ const Authentication = () => {
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [rememberMeInput, setRememberMeInput] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSignIn() {
     try {
@@ -28,10 +30,10 @@ const Authentication = () => {
         }),
       });
 
-      const apiData: TokenResponse = await response.json();
-
-      if (!apiData.ok) {
+      if (response.ok) {
+        const apiData: TokenResponse = await response.json();
         localStorage.setItem("token", apiData.token);
+        navigate("/chooseYourPath");
       }
     } catch (err) {
       console.error(err);
@@ -52,10 +54,10 @@ const Authentication = () => {
         }),
       });
 
-      const apiData: TokenResponse = await response.json();
-
-      if (apiData) {
+      if (response.ok) {
+        const apiData: TokenResponse = await response.json();
         localStorage.setItem("token", apiData.token);
+        navigate("/chooseYourPath");
       }
     } catch (err) {
       console.error(err);

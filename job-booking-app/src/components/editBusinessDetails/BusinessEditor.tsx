@@ -3,6 +3,7 @@ import DropdownMenu from "../global/DropdownMenu";
 import { useIsInputNumber } from "../customHooks/useIsInputNumber";
 import Service from "./Service";
 import NewService from "./NewService";
+import { useNavigate } from "react-router-dom";
 
 // TODO: Add and delete services
 // on the frontend instead of refetching
@@ -25,14 +26,17 @@ interface Service {
   category: string;
 }
 
+interface CreateBusinessResponse {
+  message: string;
+  businessId: string;
+}
+
 const BusinessEditor = ({
-  operation,
-  setOperation,
-  businessId,
+  currentBusinessId,
+  setCurrentBusinessId,
 }: {
-  operation: string;
-  setOperation: React.Dispatch<React.SetStateAction<string>>;
-  businessId?: number;
+  currentBusinessId: number;
+  setCurrentBusinessId: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
@@ -52,6 +56,7 @@ const BusinessEditor = ({
   const [businessCategoryInput, setBusinessCategoryInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
   const [websiteLinkInput, setWebsiteLinkInput] = useState("");
+  const navigate = useNavigate();
 
   async function createBusiness() {
     try {
@@ -72,7 +77,9 @@ const BusinessEditor = ({
       });
 
       if (response.ok) {
-        const apiData = await response.json();
+        const apiData: CreateBusinessResponse = await response.json();
+        setCurrentBusinessId(parseInt(apiData.businessId));
+        // Placeholder alert
         alert(apiData.message);
       }
     } catch (err) {
@@ -82,21 +89,24 @@ const BusinessEditor = ({
 
   async function editBusiness() {
     try {
-      const response = await fetch(`${apiBase}/businesses/${businessId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token || "",
-        },
-        body: JSON.stringify({
-          name: businessNameInput,
-          location: businessLocationInput,
-          description: businessDescriptionInput,
-          category: businessCategoryInput,
-          phoneNumber: phoneNumberInput,
-          websiteLink: websiteLinkInput,
-        }),
-      });
+      const response = await fetch(
+        `${apiBase}/businesses/${currentBusinessId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token || "",
+          },
+          body: JSON.stringify({
+            name: businessNameInput,
+            location: businessLocationInput,
+            description: businessDescriptionInput,
+            category: businessCategoryInput,
+            phoneNumber: phoneNumberInput,
+            websiteLink: websiteLinkInput,
+          }),
+        }
+      );
 
       if (response.ok) {
         const apiData = await response.json();
@@ -111,12 +121,15 @@ const BusinessEditor = ({
   const fetchServices = useCallback(
     async function fetchServices() {
       try {
-        const response = await fetch(`${apiBase}/services/${businessId}`, {
-          method: "GET",
-          headers: {
-            Authorization: token || "",
-          },
-        });
+        const response = await fetch(
+          `${apiBase}/services/${currentBusinessId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: token || "",
+            },
+          }
+        );
 
         if (response.ok) {
           const apiData = await response.json();
@@ -126,7 +139,7 @@ const BusinessEditor = ({
         console.error(err);
       }
     },
-    [apiBase, businessId, token]
+    [apiBase, currentBusinessId, token]
   );
 
   function handlePhoneInput(event: ChangeEvent<HTMLInputElement>) {
@@ -137,11 +150,11 @@ const BusinessEditor = ({
 
   useEffect(() => {
     // Add a flag here to prevent refetching when freshly creating a business
-    if (operation === "Edit") {
+    if (currentBusinessId) {
       async function fetchBusinessInfo() {
         try {
           const response = await fetch(
-            `${apiBase}/businesses/fill/${businessId}`,
+            `${apiBase}/businesses/fill/${currentBusinessId}`,
             {
               method: "GET",
               headers: {
@@ -168,7 +181,7 @@ const BusinessEditor = ({
 
       fetchBusinessInfo();
     }
-  }, [operation, businessId, apiBase, token]);
+  }, [currentBusinessId, apiBase, token]);
 
   useEffect(() => {
     fetchServices();
@@ -237,10 +250,12 @@ const BusinessEditor = ({
             fetchServices={fetchServices}
           ></Service>
         ))}
-        {operation === "Edit" ? (<NewService
-          businessId={businessId}
-          fetchServices={fetchServices}
-        ></NewService>) : null}
+        {currentBusinessId ? (
+          <NewService
+            businessId={currentBusinessId}
+            fetchServices={fetchServices}
+          ></NewService>
+        ) : null}
         <div className="w-full h-[1px] mt-7 bg-neutral-200"></div>
         <h2 className="mt-7 text-xl font-bold">Contact Information</h2>
         <div className="flex gap-2 items-center w-full mt-5">
@@ -277,6 +292,9 @@ const BusinessEditor = ({
             <button
               className="py-2 px-4 border-2 bg-white border-neutral-200 rounded-md font-bold cursor-pointer"
               type="button"
+              onClick={() => {
+                navigate("/myBusinesses");
+              }}
             >
               Cancel
             </button>
@@ -284,15 +302,14 @@ const BusinessEditor = ({
               className="py-2 px-4 bg-black border-2 border-neutral-200 rounded-md font-bold text-white cursor-pointer"
               type="button"
               onClick={() => {
-                if (operation === "Create") {
+                if (currentBusinessId) {
                   createBusiness();
-                  setOperation("Edit");
                 } else {
                   editBusiness();
                 }
               }}
             >
-              Complete Setup
+              {currentBusinessId ? "Confirm Changes" : "Complete Setup"}
             </button>
           </div>
         </div>

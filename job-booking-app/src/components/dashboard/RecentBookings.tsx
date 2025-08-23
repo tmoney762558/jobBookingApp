@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import genericUser1 from "../../assets/genericUser1.svg";
+import { useNavigate } from "react-router-dom";
 
 interface Booking {
-  id: number;
-  customer_name: string;
-  service_name: string;
+  username: string;
+  name: string;
   created_at: string;
   location: string;
   current_offer: string;
@@ -15,11 +15,12 @@ const RecentBookings = ({ businessId }: { businessId: number }) => {
   const apiBase = import.meta.env.VITE_API_BASE;
   const token = localStorage.getItem("token");
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchRecentBookings() {
+    async function fetchCustomerBookings() {
       try {
-        const response = await fetch(`${apiBase}/bookings/${businessId}`, {
+        const response = await fetch(`${apiBase}/bookings/recent/customer`, {
           method: "GET",
           headers: {
             Authorization: token || "",
@@ -35,14 +36,44 @@ const RecentBookings = ({ businessId }: { businessId: number }) => {
       }
     }
 
-    fetchRecentBookings();
+    async function fetchBusinessBookings() {
+      try {
+        const response = await fetch(
+          `${apiBase}/bookings/recent/business/${businessId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: token || "",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const apiData: Booking[] = await response.json();
+          setRecentBookings(apiData);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    if (businessId) {
+      fetchBusinessBookings();
+    } else {
+      fetchCustomerBookings();
+    }
   }, [apiBase, token, businessId]);
 
   return (
     <div className="w-full md:h-[20rem] h-[15rem] mt-5 pb-7 border-2 border-neutral-200 rounded-md overflow-y-auto">
       <div className="flex justify-between items-center p-4 border-b-2 border-neutral-200">
         <h2 className="font-semibold">Recent Bookings</h2>
-        <button className="text-sm text-neutral-600 cursor-pointer">
+        <button
+          className="text-sm text-neutral-600 cursor-pointer"
+          onClick={() => {
+            navigate("/bookings");
+          }}
+        >
           View all
         </button>
       </div>
@@ -55,9 +86,9 @@ const RecentBookings = ({ businessId }: { businessId: number }) => {
             <div className="flex md:flex-row flex-col lg:items-center items-start gap-3 w-full">
               <img className="lg:block hidden w-10" src={genericUser1}></img>
               <div>
-                <p>{booking.service_name}</p>
+                <p>{booking.name}</p>
                 <p className="text-neutral-500">
-                  {booking.customer_name} * {booking.created_at}
+                  {booking.username} * {booking.created_at}
                 </p>
               </div>
             </div>
