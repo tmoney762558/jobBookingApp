@@ -176,7 +176,7 @@ router.post("/", async (req: AuthenticatedRequest, res: express.Response) => {
       .status(200)
       .json({
         message: "Sucessfully created business.",
-        businessId: newBusiness.rows[0],
+        businessId: newBusiness.rows[0].id,
       });
   } catch (err) {
     console.error(err);

@@ -45,7 +45,7 @@ const App = () => {
         path="/bookings"
         element={<JobViewer businessId={currentBusinessId}></JobViewer>}
       ></Route>
-      <Route path="/jobs/search" element={<JobBoard></JobBoard>}></Route>
+      <Route path="/search" element={<JobBoard business_id={currentBusinessId}></JobBoard>}></Route>
     </Routes>
   );
 };

@@ -1,5 +1,6 @@
 import { FaCalendar, FaDollarSign } from "react-icons/fa";
 import { FaGear, FaPeopleGroup } from "react-icons/fa6";
+import { IoBusiness } from "react-icons/io5";
 import { PiChartLineUp } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +20,7 @@ const SideNav = ({ isBusinessOwner }: { isBusinessOwner: boolean }) => {
       <button
         className={`flex items-center gap-3 w-full py-1 lg:px-3 px-2 hover:bg-neutral-200 rounded-sm cursor-pointer`}
         onClick={() => {
-          navigate("/bookings")
+          navigate("/bookings");
         }}
       >
         <FaCalendar fontSize={"1.3rem"}></FaCalendar>
@@ -31,6 +32,17 @@ const SideNav = ({ isBusinessOwner }: { isBusinessOwner: boolean }) => {
         >
           <FaPeopleGroup fontSize={"1.3rem"}></FaPeopleGroup>
           <p className="md:block hidden text-sm">Clients</p>
+        </button>
+      ) : null}
+      {isBusinessOwner ? (
+        <button
+          className={`flex items-center gap-3 w-full py-1 lg:px-3 px-2 hover:bg-neutral-200 rounded-sm cursor-pointer`}
+          onClick={() => {
+            navigate("/myBusinesses");
+          }}
+        >
+          <IoBusiness fontSize={"1.3rem"}></IoBusiness>
+          <p className="md:block hidden text-sm">Businesses</p>
         </button>
       ) : null}
       <button

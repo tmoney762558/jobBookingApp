@@ -71,14 +71,14 @@ const MyBusinesses = ({
         <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-7 w-full mt-7 pb-10">
           {businesses.map((business, index) => (
             <div
-              className="cursor-pointer"
               onClick={() => {
                 setCurrentBusinessId(business.id);
-                navigate("/businessEditor");
+                navigate("/dashboard");
               }}
             >
               <BusinessCard
                 key={index}
+                id={business.id}
                 icon={<FaPaintBrush fill="white"></FaPaintBrush>}
                 status="Active"
                 name={business.name}
@@ -86,6 +86,7 @@ const MyBusinesses = ({
                 services={business.service_count}
                 bookings={business.booking_count}
                 revenue={business.total_revenue}
+                setCurrentBusinessId={setCurrentBusinessId}
               ></BusinessCard>
             </div>
           ))}
