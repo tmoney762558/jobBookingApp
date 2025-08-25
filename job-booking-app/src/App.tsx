@@ -11,7 +11,7 @@ import ChooseYourPath from "./components/chooseYourPath/ChooseYourPath";
 const App = () => {
   // All placeholder alerts will be replaced with a custom error/success message component in the future
   // Optimize API calls by deleting data from the frontend instead of refetching (partially implemented)
-  const [currentBusinessId, setCurrentBusinessId] = useState(1);
+  const [currentBusinessId, setCurrentBusinessId] = useState(0);
   const [businessOperation, setBusinessOperation] = useState("Edit");
   return (
     <Routes>
